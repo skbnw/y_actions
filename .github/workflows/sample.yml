@@ -1,27 +1,26 @@
-name: Sample
+import os
+import shutil
 
-on:
-  push:
-    branches:
-      - main
-  workflow_dispatch:
-  schedule:
-    - cron: "*/5 * * * *"
+# コピー元のディレクトリパス
+source_directory = "xml-files"
 
-jobs:
-  numpy-test:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2
-      - name: Setup Python
-        uses: actions/setup-python@v2
-        with:
-          python-version: '3.8'
-          architecture: 'x64'
-      - name: Upgrade pip
-        run: python -m pip install --upgrade pip
-      - name: Install dependencies
-        run: |
-          pip install -r ${{ github.workspace }}/.github/workflows/requirements.txt
-      - name: Run Python
-        run: python sample.py
+# コピー先のディレクトリパス
+destination_directory = os.path.join(source_directory, "copy")
+
+# コピー先のディレクトリが存在しない場合は作成する
+os.makedirs(destination_directory, exist_ok=True)
+
+# xml-filesフォルダ内のすべてのファイルを取得
+file_list = os.listdir(source_directory)
+
+# xmlファイルをコピーする
+for file_name in file_list:
+    if file_name.endswith(".xml"):
+        source_path = os.path.join(source_directory, file_name)
+        destination_path = os.path.join(destination_directory, file_name)
+        try:
+            shutil.copy2(source_path, destination_path)
+            print(f"コピー完了: {file_name}")
+        except Exception as e:
+            print(f"コピー失敗: {file_name}")
+            print(f"エラーメッセージ: {str(e)}")
