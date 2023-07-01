@@ -18,5 +18,5 @@ for file_name in file_list:
     if file_name.endswith(".xml"):
         source_path = os.path.join(source_directory, file_name)
         destination_path = os.path.join(destination_directory, "copy_" + file_name)
-        shutil.copyfile(source_path, destination_path)
+        shutil.copy(source_path, destination_path)
         print(f"コピー完了: {file_name}")
