@@ -1,23 +1,27 @@
-import os
-import shutil
+name: Run Python Script Daily
 
-# コピー元のディレクトリパス
-source_directory = "xml-files"
+on:
+  schedule:
+    - cron: "*/10 * * * *"
 
-# コピー先のディレクトリパス
-destination_directory = os.path.join(source_directory, "copy")
+jobs:
+  run-python-script:
+    runs-on: ubuntu-latest
 
-# コピー先のディレクトリが存在しない場合は作成する
-os.makedirs(destination_directory, exist_ok=True)
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
 
-# xml-filesフォルダ内のすべてのファイルを取得
-for root, dirs, files in os.walk(source_directory):
-    for file_name in files:
-        if file_name.endswith(".xml"):
-            source_path = os.path.join(root, file_name)
-            destination_path = os.path.join(destination_directory, file_name)
-            try:
-                shutil.copy2(source_path, destination_path)
-                print(f"コピー完了: {file_name}")
-            except Exception as e:
-                print
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.x  # Pythonのバージョンを指定
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt  # 必要な依存パッケージがあればrequirements.txtに追加
+
+      - name: Run Python script
+        run: |
+          python media_all_dropbox.py  # 実行したいPythonスクリプトのファイル名に置き換える
