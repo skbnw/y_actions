@@ -1,48 +1,6 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-# In[1]:
-
-
-import os
-import subprocess
-from datetime import datetime
-import time
-
-def fetch_rss_feeds():
-    current_time = datetime.now().strftime('%Y%m%d_%H%M')
-    xml_directory = 'xml-files'
-    os.makedirs(xml_directory, exist_ok=True)
-    
-    rss_feeds = [
-        ('top-picks', 'https://news.yahoo.co.jp/rss/topics/top-picks.xml'),
-        ('domestic', 'https://news.yahoo.co.jp/rss/topics/domestic.xml'),
-        ('world', 'https://news.yahoo.co.jp/rss/topics/world.xml'),
-        ('business', 'https://news.yahoo.co.jp/rss/topics/business.xml'),
-        ('entertainment', 'https://news.yahoo.co.jp/rss/topics/entertainment.xml'),
-        ('sports', 'https://news.yahoo.co.jp/rss/topics/sports.xml'),
-        ('it', 'https://news.yahoo.co.jp/rss/topics/it.xml'),
-        ('local', 'https://news.yahoo.co.jp/rss/topics/local.xml'),
-        ('science', 'https://news.yahoo.co.jp/rss/topics/science.xml')
-    ]
-
-    for feed_name, feed_url in rss_feeds:
-        xml_file = f'{xml_directory}/{feed_name}_{current_time}.xml'
-        subprocess.run(['curl', '-o', xml_file, feed_url])
-        time.sleep(3)
-    
-    subprocess.run(['git', 'config', 'user.name', 'Automated'])
-    subprocess.run(['git', 'config', 'user.email', 'actions@users.noreply.github.com'])
-    subprocess.run(['git', 'add', 'xml-files/'])
-    subprocess.run(['git', 'commit', '-m', 'Update XML files'])
-    subprocess.run(['git', 'push'])
-
-fetch_rss_feeds()
-
-
-# In[3]:
-
-
 import dropbox
 import os
 from datetime import datetime
