@@ -89,7 +89,7 @@ for index, row in url_data.iterrows():
 
     # Dropboxにアップロード
     with open(filename, 'rb') as file:
-        dbx.files_upload(file.read(), f"/test/{filename}")
+        dbx.files_upload(file.read(), f"/output/{filename}")
 
     # 作業完了メッセージをプリント
     print(f"Scraping complete for {media_jp}. File uploaded to Dropbox: {filename}")
