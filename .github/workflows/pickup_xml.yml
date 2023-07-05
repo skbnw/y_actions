@@ -1,4 +1,4 @@
-name: Run Python Script Every 20 Minutes
+name: Run Python pickup_xml Every 20 Minutes
 
 on:
   schedule:
