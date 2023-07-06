@@ -1,4 +1,4 @@
-name:Pickup categry all every 20 mins
+name: Pickup category all every 20 mins
 
 on:
   schedule:
