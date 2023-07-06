@@ -15,7 +15,7 @@ jobs:
           python-version: '3.9'
       - run: pip install notebook requests bs4 dropbox
       - name: Run scraper
-        run: python pickup-xml-dropbox.py
+        run: python media_all_dropbox.py
 
       - name: Add and commit
         id: add_commit
