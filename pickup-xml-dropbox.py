@@ -7,7 +7,7 @@ from datetime import datetime
 import time
 
 # Dropbox APIのアクセストークン
-ACCESS_TOKEN = 'sl.BhqKDcUkIMbvkdbiQEN_MAbOZAnFqO9j8dNNEcnVZv0FwA2AqnIyn6a0C0iYlGa20bUCkPhE14JtsmNQaxI79nxM1IBgVb9JNyqeWN_l5EDvauf1I4BT9KTls6bmd5_GkOB4BJc'
+ACCESS_TOKEN = 'sl.BhrIUdxpbAOKNQLAbO-ANjQbdE1tBrUk6o93TwozMidONXv2lyOVFNfG3kjx86jFkfAxmzCDzz2g4AJEWvy4oDQm_VIE0jJDRBdxIBT0eOKtQ_iG3B_p94ymqz1Ol28Q0jeWjTI'
 
 # Dropboxへの接続
 dbx = dropbox.Dropbox(ACCESS_TOKEN)
