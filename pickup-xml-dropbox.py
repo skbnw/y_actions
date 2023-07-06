@@ -68,7 +68,6 @@ def fetch_and_upload_xml_files():
                 upload_file(xml_file, os.path.basename(xml_file), folder_name)
             else:
                 print(f"File '{xml_file}' does not exist.")
-```python
         else:
             print(f"Failed to download XML file from {feed_url}")
         time.sleep(3)
