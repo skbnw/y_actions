@@ -5,6 +5,7 @@ import dropbox
 import os
 from datetime import datetime
 import time
+import requests
 
 # Dropbox APIのアクセストークン
 ACCESS_TOKEN = 'sl.Bho3a2GRl2WPeYHk5WcQnPrteZyJwYHz_aEfhyBG6Sp0gSApvkxqi5pZ1C0dAxJVps_nKqNUTf8MxFwqvajly_x9dhbU8rSR9u10LS75QOyACy6orGztXw1fRC9ufWl66qqiu3E'
@@ -59,19 +60,18 @@ def fetch_and_upload_xml_files():
 
     for feed_name, feed_url in rss_feeds:
         xml_file = f'{xml_directory}/{feed_name}_{current_time}.xml'
-        subprocess.run(['curl', '-o', xml_file, feed_url])
-        time.sleep(3)
-        if os.path.isfile(xml_file):
-            upload_file(xml_file, os.path.basename(xml_file), folder_name)
+        response = requests.get(feed_url)
+        if response.status_code == 200:
+            with open(xml_file, 'wb') as f:
+                f.write(response.content)
+            if os.path.isfile(xml_file):
+                upload_file(xml_file, os.path.basename(xml_file), folder_name)
+            else:
+                print(f"File '{xml_file}' does not exist.")
+```python
         else:
-            print(f"File '{xml_file}' does not exist.")
+            print(f"Failed to download XML file from {feed_url}")
+        time.sleep(3)
 
 # XMLファイルの取得とアップロードを実行
 fetch_and_upload_xml_files()
-
-
-# In[ ]:
-
-
-
-
