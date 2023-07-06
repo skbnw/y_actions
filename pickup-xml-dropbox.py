@@ -8,7 +8,7 @@ import time
 import requests
 
 # Dropbox APIのアクセストークン
-ACCESS_TOKEN = 'sl.Bho3a2GRl2WPeYHk5WcQnPrteZyJwYHz_aEfhyBG6Sp0gSApvkxqi5pZ1C0dAxJVps_nKqNUTf8MxFwqvajly_x9dhbU8rSR9u10LS75QOyACy6orGztXw1fRC9ufWl66qqiu3E'
+ACCESS_TOKEN = 'sl.BhoR93kRIKFp1TPo5zN1u4v9mdavdZYui55JI8-fzr-A283Yp6ttKsjUVkQhbfFyz_rm2i2RpBvhlo-R1eyFu8k-GLsuYjtUoTbJRrBX6HTjK_A7AoYsgUqWRIcLczYhkOrooG4'
 
 # Dropboxへの接続
 dbx = dropbox.Dropbox(ACCESS_TOKEN)
