@@ -1,4 +1,4 @@
-name: Scrape
+name:Pickup categry all every 20 mins
 
 on:
   schedule:
