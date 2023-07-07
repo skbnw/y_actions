@@ -13,7 +13,7 @@ auth_flow = dropbox.DropboxOAuth2FlowNoRedirect(app_key, app_secret, token_acces
 authorize_url = auth_flow.start()
 
 # アクセスコード（認証コード）を変数として扱う
-auth_code = 'TmVaZaXVHl4AAAAAAARvQfQyjeIpnCUog6WYCHqv_80'
+auth_code = 'TmVaZaXVHl4AAAAAAARvQtQm83Y9w_AO2Ot9Nei6VY0'
 
 # アクセスコードを使用してアクセストークンとリフレッシュトークンを取得
 oauth_result = auth_flow.finish(auth_code)
