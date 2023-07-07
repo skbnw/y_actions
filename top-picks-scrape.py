@@ -15,7 +15,7 @@ app_key = '86eg2z9yfdea4ki'
 app_secret = 'zxdqhotp4dg2bjn'
 
 # アクセスコード（認証コード）を変数として扱う
-auth_code = 'TmVaZaXVHl4AAAAAAARvRd6QRjMl-khMweakgAL9o3o'
+auth_code = 'TmVaZaXVHl4AAAAAAARvRgssufut6WbSCzNycZ8m6Zw'
 
 # OAuth2フローを開始
 auth_flow = dropbox.DropboxOAuth2FlowNoRedirect(app_key, app_secret, token_access_type='offline')
