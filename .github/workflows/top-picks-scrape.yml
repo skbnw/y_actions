@@ -1,0 +1,26 @@
+name: Pickup categry all every 20 mins
+
+on:
+  schedule:
+    - cron: "*/10 * * * *"
+  workflow_dispatch:
+
+jobs:
+  scrape:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-python@v2
+        with:
+          python-version: '3.9'
+      - run: pip install notebook requests bs4 dropbox
+      - name: Run scraper
+        run: python top-picks-scrape.py
+
+      - name: Add and commit
+        id: add_commit
+        uses: EndBug/add-and-commit@v8
+        with:
+          committer_name: Automated
+          committer_email: actions@users.noreply.github.com
+          message: "Latest data"
