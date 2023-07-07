@@ -1,17 +1,27 @@
-#!/usr/bin/env python
-# coding: utf-8
-
 import dropbox
 import os
 from datetime import datetime
 import time
 import requests
 
-# Dropbox APIのアクセストークン
-ACCESS_TOKEN = 'sl.BhoR93kRIKFp1TPo5zN1u4v9mdavdZYui55JI8-fzr-A283Yp6ttKsjUVkQhbfFyz_rm2i2RpBvhlo-R1eyFu8k-GLsuYjtUoTbJRrBX6HTjK_A7AoYsgUqWRIcLczYhkOrooG4'
+# Dropbox APIのアプリキーとアプリシークレットキー
+app_key = 'qmfb5lhstinll9m'
+app_secret = 'rogbxz9u608bmjk'
+
+# OAuth2フローを開始
+auth_flow = dropbox.DropboxOAuth2FlowNoRedirect(app_key, app_secret, token_access_type='offline')
+authorize_url = auth_flow.start()
+
+# アクセスコード（認証コード）を変数として扱う
+auth_code = 'TmVaZaXVHl4AAAAAAARvQfQyjeIpnCUog6WYCHqv_80'
+
+# アクセスコードを使用してアクセストークンとリフレッシュトークンを取得
+oauth_result = auth_flow.finish(auth_code)
+access_token = oauth_result.access_token
+refresh_token = oauth_result.refresh_token
 
 # Dropboxへの接続
-dbx = dropbox.Dropbox(ACCESS_TOKEN)
+dbx = dropbox.Dropbox(access_token)
 
 # フォルダ名
 folder_name = 'xml-files'
@@ -73,4 +83,11 @@ def fetch_and_upload_xml_files():
         time.sleep(3)
 
 # XMLファイルの取得とアップロードを実行
-fetch_and_upload_xml_files()
+try:
+    fetch_and_upload_xml_files()
+except dropbox.exceptions.AuthError:
+    # アクセストークンのリフレッシュ
+    oauth_result = auth_flow.finish(None, refresh_token=refresh_token)
+    access_token = oauth_result.access_token
+    dbx = dropbox.Dropbox(access_token)
+    fetch_and_upload_xml_files()
