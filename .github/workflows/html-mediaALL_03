@@ -1,0 +1,42 @@
+name: html-mediaALL_03
+
+on:
+  schedule:
+    - cron: "0 */24 * * *"
+  workflow_dispatch:
+
+jobs:
+  run_scraper:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: '3.9.x'
+
+      - name: Upgrade pip
+        run: python -m pip install --upgrade pip
+
+      - name: Install dependencies
+        run: |
+          python -m pip install notebook requests bs4 dropbox pandas
+
+      - name: Add and commit
+        id: add_commit
+        uses: EndBug/add-and-commit@v8
+        with:
+          committer_name: Automated
+          committer_email: actions@users.noreply.github.com
+          message: "Latest data"
+
+      - name: Run scraper
+        run: python media_scraper_group03_Ver.3.6.py
+
+      - name: Pull changes
+        run: git pull origin ${{ github.ref }}
+
+      - name: Push changes
+        run: git push origin ${{ github.ref }}
