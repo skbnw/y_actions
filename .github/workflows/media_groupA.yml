@@ -1,8 +1,8 @@
-name:media all daily
+name: html-media_groupA
 
 on:
   schedule:
-    - cron: "*/20 * * * *"
+    - cron: */20 * * * *"  # 月曜日、水曜日、金曜日の午前0時0分に実行
   workflow_dispatch:
 
 jobs:
@@ -13,9 +13,9 @@ jobs:
       - uses: actions/setup-python@v2
         with:
           python-version: '3.9'
-      - run: pip install notebook requests bs4 dropbox
+      - run: pip install notebook requests bs4 dropbox pandas
       - name: Run scraper
-        run: python media_all_dropbox.py
+        run: python media_scraper_group_Ver.3.6.py
 
       - name: Add and commit
         id: add_commit
