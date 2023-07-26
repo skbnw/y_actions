@@ -48,9 +48,9 @@ for index, row in url_data.iterrows():
     media_jp = row["media_jp"]
     media_en = row["media_en"]
     url = row["url"]
-
-    # groupが"a"でない場合はスキップ
-    if group != "a":
+    
+    # groupが"a", "b", "c"のいずれかの場合はスクレイプ
+    if group not in ["a", "b", "c"]:
         continue
 
     # スクレイピングの処理を実行
