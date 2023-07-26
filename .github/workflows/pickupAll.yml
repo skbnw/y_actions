@@ -1,4 +1,4 @@
-name: html-Pickup 3times in a week
+name: html-pickup
 
 on:
   schedule:
