@@ -15,7 +15,7 @@ jobs:
           python-version: '3.9'
       - run: pip install notebook requests bs4 dropbox pandas
       - name: Run scraper
-        run: python pickup-xml-dropbox.py
+        run: python topics_scraper_all_Ver.5.1.py
 
       - name: Add and commit
         id: add_commit
