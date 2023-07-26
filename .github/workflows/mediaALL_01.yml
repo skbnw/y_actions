@@ -37,7 +37,7 @@ jobs:
           git show --format="%H" -s > "${{ github.workspace }}/commit_sha.txt"
         shell: bash
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ GITHUBY }}
 
       - name: Pull changes
         run: git pull origin main
@@ -45,4 +45,4 @@ jobs:
       - name: Push changes
         run: git push origin main
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ GITHUBY }}
