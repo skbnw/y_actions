@@ -1,8 +1,8 @@
-name: Pickup categry all every 20 mins
+name: html-Pickup 3times in a week
 
 on:
   schedule:
-    - cron: "*/20 * * * *"
+    - cron: "0 0 * * 1,3,5"  # 月曜日、水曜日、金曜日の午前0時0分に実行
   workflow_dispatch:
 
 jobs:
