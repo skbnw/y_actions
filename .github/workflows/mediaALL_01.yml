@@ -2,18 +2,28 @@ name: html-mediaALL_01
 
 on:
   schedule:
-    - cron: "*/10 * * * *" 
+    - cron: "0 */24 * * *"
   workflow_dispatch:
 
 jobs:
-  scrape:
+  run_scraper:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
-      - uses: actions/setup-python@v2
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Set up Python
+        uses: actions/setup-python@v2
         with:
-          python-version: '3.9'
-      - run: pip install notebook requests bs4 dropbox pandas
+          python-version: '3.9.x'  # Replace 'x' with the latest patch version of Python 3.9
+
+      - name: Upgrade pip
+        run: python -m pip install --upgrade pip
+
+      - name: Install dependencies
+        run: |
+          python -m pip install notebook requests bs4 dropbox pandas
+
       - name: Run scraper
         run: python media_scraper_group01_Ver.3.6.py
 
