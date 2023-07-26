@@ -50,7 +50,7 @@ for index, row in url_data.iterrows():
     url = row["url"]
     
     # groupが"a", "b", "c","s"の場合はスキップ
-    if group in ["a", "b", "c" ,"s"]:
+    if group in ["a"]:
         continue
 
     # スクレイピングの処理を実行
