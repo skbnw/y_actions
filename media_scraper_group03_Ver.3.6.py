@@ -1,9 +1,6 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-# In[1]:
-
-
 # ヤフー出稿メディア700超に、出稿頻度、ジャンルなどを含めてグループ分けしてスクレイプします。
 # フォルダは、月単位で生成されファイルが追加されていきます
 # a　主要ニュース系 group
@@ -16,8 +13,6 @@
 # m　マガジン系
 # s　スポーツ紙
 
-
-# In[1]:
 
 import requests
 from bs4 import BeautifulSoup
@@ -98,10 +93,10 @@ for index, row in url_data.iterrows():
 
     # 保存するディレクトリが存在しない場合は作成する
     folder_name = now.strftime("html_mediaALL_%Y%m_%W")
-    os.makedirs(folder_name, exist_ok=True)
+    os.makedirs(f"./{folder_name}", exist_ok=True)
 
     # ファイル名を設定
-    filename = f"{folder_name}/html_{media_en}_{now.strftime('%Y%m%d_%H%M%S')}.csv"
+    filename = f"./{folder_name}/html_{media_en}_{now.strftime('%Y%m%d_%H%M%S')}.csv"
 
     # DataFrameをCSVファイルとして書き出し（エンコーディング：CP932）
     df.to_csv(filename, index=False, encoding="CP932", errors="ignore")
