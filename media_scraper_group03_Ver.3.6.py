@@ -19,7 +19,6 @@
 
 # In[1]:
 
-
 import requests
 from bs4 import BeautifulSoup
 import pandas as pd
@@ -90,7 +89,7 @@ for index, row in url_data.iterrows():
         page += 1
 
         # データがなくなった場合に次のURLにスイッチ
-        if not items:
+        if len(items) == 0:
             print(f"No more data for {media_jp}. Switching to next URL.")
             break
 
@@ -115,10 +114,3 @@ for index, row in url_data.iterrows():
 
     # データをクリア
     data = []
-
-
-# In[ ]:
-
-
-
-
