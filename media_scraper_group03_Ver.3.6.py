@@ -34,9 +34,6 @@ interval = 3  # インターバル（秒）
 # 現在の日付と時刻を取得
 now = datetime.now()
 
-# データを格納するためのリストを作成
-data = []
-
 for index, row in url_data.iterrows():
     group = row["group"]
     media_jp = row["media_jp"]
@@ -51,6 +48,9 @@ for index, row in url_data.iterrows():
     start_page = 1
     end_page = 100
     page = start_page
+
+    # データを格納するためのリストを作成
+    data = []
 
     while page <= end_page:
         url_with_page = f"{url}?page={page}"
@@ -106,6 +106,3 @@ for index, row in url_data.iterrows():
 
     # スクレイピングが完了したことを示すメッセージを表示
     print("Scraping finished")
-
-    # データをクリア
-    data = []
