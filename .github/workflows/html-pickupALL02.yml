@@ -11,49 +11,36 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v2
 
-      - name: Set up Python
-        uses: actions/setup-python@v2
+      - name: Setup Python
+        uses: actions/setup-python@v3
         with:
           python-version: '3.9'
 
       - name: Install dependencies
         run: pip install notebook requests bs4 dropbox pandas
 
-      - name: Run scraper and get file names
-        id: run_scraper
-        run: |
-          # スクレイプを実行してファイルを生成
-          python topics_scraper_all_Ver.5.1.py
+      - name: Run scraper
+        run: python topics_scraper_all_Ver.5.1.py
 
-          # スクレイプした結果からファイル名を取得してリストに格納
-          scraped_files=$(find . -name "html_*.csv")
-          echo "SCRAPED_FILES=$scraped_files" >> $GITHUB_ENV
-
-      - name: Create target folder
+      - name: Create directory for artifacts
         run: |
-          # 今日の日付を取得してフォルダ名を作成（フォルダ名は%Y%m形式）
-          today=$(date +'%Y%m')
-          mkdir -p html-pickup_${today}
+          month=$(date +'%Y%m')
+          mkdir -p "html-pickup_${month}"
 
-      - name: Copy generated files to target folder
+      - name: Move CSV files to artifact directory
         run: |
-          # スクレイプしたファイルをターゲットフォルダにコピーします
-          for file in $SCRAPED_FILES; do
-            if [ -f "$file" ]; then
-              cp $file html-pickup_${today}
-            else
-              echo "File not found: $file"
-            fi
-          done
+          month=$(date +'%Y%m')
+          mv html-pickup_202307/*.csv "html-pickup_${month}/"
 
       - name: Archive new files
-        run: tar czvf html-pickup_${today}.tar.gz html-pickup_${today}
+        run: |
+          month=$(date +'%Y%m')
+          tar czvf "html-pickup_${month}.tar.gz" "html-pickup_${month}"
 
-      - name: Upload Artifacts
+      - name: Upload artifacts
         uses: actions/upload-artifact@v2
         with:
-          name: html_pickup_${today}
-          path: html-pickup_${today}.tar.gz
-
+          name: html-pickup
+          path: "html-pickup_${month}.tar.gz"
