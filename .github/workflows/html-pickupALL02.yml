@@ -12,8 +12,8 @@ jobs:
       MY_VARIABLE: "my_value"  # 任意の変数名と値を設定します
 
     steps:
-      - uses: actions/checkout@v2
-      - uses: actions/setup-python@v2
+      - uses: actions/checkout@v3
+      - uses: actions/setup-python@v3
         with:
           python-version: '3.9'
       - run: pip install notebook requests bs4 dropbox pandas
@@ -44,8 +44,11 @@ jobs:
       - name: Archive files
         run: tar czvf html-pickup_${TODAY}.tar.gz html-pickup_${TODAY}
 
+      - name: Copy artifact file
+        run: cp html-pickup_${TODAY}.tar.gz $GITHUB_WORKSPACE/html-pickup_${TODAY}.tar.gz
+
       - name: Upload Artifacts
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           name: html_pickup_${TODAY}
-          path: html-pickup_${TODAY}.tar.gz
+          path: $GITHUB_WORKSPACE/html-pickup_${TODAY}.tar.gz
