@@ -27,12 +27,6 @@ jobs:
           mkdir -p "html-pickup_${today}"
           python topics_scraper_all_Ver.5.1.py
 
-      - name: Archive new files
-        run: |
-          today=$(date +'%Y%m%d_%H%M')
-          month=$(date +'%Y%m')
-          mv ./html-pickup_${month}/*.csv "html-pickup_${month}"
-
       - name: Create artifact
         uses: actions/upload-artifact@v2
         with:
