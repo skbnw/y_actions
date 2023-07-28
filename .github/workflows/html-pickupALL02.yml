@@ -8,50 +8,47 @@ on:
 jobs:
   scrape:
     runs-on: ubuntu-latest
-    env:
-      MY_VARIABLE: "my_value"  # 任意の変数名と値を設定します
 
     steps:
-      - uses: actions/checkout@v3
-      - uses: actions/setup-python@v3
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v2
         with:
           python-version: '3.9'
-      - run: pip install notebook requests bs4 dropbox pandas
-      - name: Run scraper
-        run: python topics_scraper_all_Ver.5.1.py
 
-      - name: Get current date
-        id: get_date
-        run: echo "TODAY=$(date +'%Y%m')" >> $GITHUB_ENV
+      - name: Install dependencies
+        run: pip install notebook requests bs4 dropbox pandas
 
-      - name: Create directory if not exists
-        run: mkdir -p html-pickup_${TODAY}
-
-      - name: Save state
-        run: echo "name=$MY_VARIABLE" >> $GITHUB_STATE
-
-      - name: Set output
-        run: echo "name=$MY_VARIABLE" >> $GITHUB_OUTPUT
-
-      - name: Add and commit
-        id: add_commit
+      - name: Run scraper and get file names
+        id: run_scraper
         run: |
-          git config --global user.name "Automated"
-          git config --global user.email "actions@users.noreply.github.com"
-          git add .
-          git commit -m "Latest data"
+          # スクレイプを実行してファイルを生成
+          python topics_scraper_all_Ver.5.1.py
+
+          # スクレイプした結果からファイル名を取得してリストに格納
+          scraped_files=$(find . -name "html_*.csv")
+          echo "SCRAPED_FILES=$scraped_files" >> $GITHUB_ENV
+
+      - name: Create target folder
+        run: |
+          # 今日の日付を取得してフォルダ名を作成
+          today=$(date +'%Y%m_%H%M')
+          mkdir -p html-pickup_${today}
+
+      - name: Copy generated files to target folder
+        run: |
+          # スクレイプしたファイルをターゲットフォルダにコピーします
+          for file in $SCRAPED_FILES; do
+            cp $file html-pickup_${GITHUB_ENV_TODAY}
+          done
 
       - name: Archive new files
-        run: |
-          # 新たに加わったファイルをターゲットフォルダにコピーします
-          cp topics_scraper_all_Ver.5.1.py html-pickup_${TODAY}
-          # 他の必要なファイルも同様にコピーしてください
-
-          # 新たに加わったファイルをアーカイブします
-          tar czvf html-pickup_${TODAY}.tar.gz html-pickup_${TODAY}
+        run: tar czvf html-pickup_${GITHUB_ENV_TODAY}.tar.gz html-pickup_${GITHUB_ENV_TODAY}
 
       - name: Upload Artifacts
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v2
         with:
-          name: html_pickup_${TODAY}
-          path: html-pickup_${TODAY}.tar.gz
+          name: html_pickup_${GITHUB_ENV_TODAY}
+          path: html-pickup_${GITHUB_ENV_TODAY}.tar.gz
