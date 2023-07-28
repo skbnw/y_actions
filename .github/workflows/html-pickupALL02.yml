@@ -22,7 +22,7 @@ jobs:
 
       - name: Get current date
         id: get_date
-        run: echo "TODAY=$(date +'%Y%m_%H%M')" >> $GITHUB_ENV
+        run: echo "TODAY=$(date +'%Y%m')" >> $GITHUB_ENV
 
       - name: Create directory if not exists
         run: mkdir -p html-pickup_${TODAY}
