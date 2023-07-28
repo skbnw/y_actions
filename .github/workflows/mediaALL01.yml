@@ -16,7 +16,7 @@ jobs:
       - name: Install required libraries
         run: pip install notebook requests bs4 dropbox pandas
       - name: Run scraper
-        run: python media_scraper_group03_Ver.3.6.py
+        run: python media_scraper_group01_Ver.3.6.py
 
       - name: Add and commit
         id: add_commit
