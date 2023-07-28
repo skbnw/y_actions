@@ -1,4 +1,4 @@
-name: html-pickupALL
+name: html-pickupALL02
 
 on:
   schedule:
@@ -8,12 +8,11 @@ on:
 jobs:
   scrape:
     runs-on: ubuntu-latest
-
     steps:
-      - name: Checkout code
+      - name: Checkout repository
         uses: actions/checkout@v2
 
-      - name: Setup Python
+      - name: Set up Python
         uses: actions/setup-python@v3
         with:
           python-version: '3.9'
@@ -21,26 +20,21 @@ jobs:
       - name: Install dependencies
         run: pip install notebook requests bs4 dropbox pandas
 
-      - name: Run scraper
-        run: python topics_scraper_all_Ver.5.1.py
-
-      - name: Create directory for artifacts
+      - name: Run scraper and save files
         run: |
+          today=$(date +'%Y%m%d_%H%M')
           month=$(date +'%Y%m')
           mkdir -p "html-pickup_${month}"
-
-      - name: Move CSV files to artifact directory
-        run: |
-          month=$(date +'%Y%m')
-          mv html-pickup_202307/*.csv "html-pickup_${month}/"
+          python topics_scraper_all_Ver.5.1.py
 
       - name: Archive new files
         run: |
+          today=$(date +'%Y%m%d_%H%M')
           month=$(date +'%Y%m')
-          tar czvf "html-pickup_${month}.tar.gz" "html-pickup_${month}"
+          mv ./html-pickup_${today}/*.csv "html-pickup_${month}"
 
-      - name: Upload artifacts
+      - name: Create artifact
         uses: actions/upload-artifact@v2
         with:
-          name: html-pickup
-          path: "html-pickup_${month}.tar.gz"
+          name: html-pickup-artifact
+          path: "html-pickup_${month}"
