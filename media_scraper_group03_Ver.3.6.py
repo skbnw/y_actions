@@ -12,8 +12,6 @@
 # g　その他
 # m　マガジン系
 # s　スポーツ紙
-
-
 import requests
 from bs4 import BeautifulSoup
 import pandas as pd
@@ -34,23 +32,23 @@ interval = 3  # インターバル（秒）
 # 現在の日付と時刻を取得
 now = datetime.now()
 
+# データを格納するためのリストを作成
+data = []
+
 for index, row in url_data.iterrows():
     group = row["group"]
     media_jp = row["media_jp"]
     media_en = row["media_en"]
     url = row["url"]
     
-    # groupが"a", "b", "c","s"の場合はスキップ
-    if group in ["a"]:
+    # groupが"a", "b", "c", "s"のいずれかの場合はスクレイプ
+    if group not in ["a", "b", "c", "s"]:
         continue
 
     # スクレイピングの処理を実行
     start_page = 1
     end_page = 100
     page = start_page
-
-    # データを格納するためのリストを作成
-    data = []
 
     while page <= end_page:
         url_with_page = f"{url}?page={page}"
@@ -84,7 +82,7 @@ for index, row in url_data.iterrows():
         page += 1
 
         # データがなくなった場合に次のURLにスイッチ
-        if len(items) == 0:
+        if not items:
             print(f"No more data for {media_jp}. Switching to next URL.")
             break
 
@@ -93,10 +91,10 @@ for index, row in url_data.iterrows():
 
     # 保存するディレクトリが存在しない場合は作成する
     folder_name = now.strftime("html_mediaALL_%Y%m_%W")
-    os.makedirs(f"./{folder_name}", exist_ok=True)
+    os.makedirs(folder_name, exist_ok=True)
 
     # ファイル名を設定
-    filename = f"./{folder_name}/html_{media_en}_{now.strftime('%Y%m%d_%H%M%S')}.csv"
+    filename = f"{folder_name}/html_{media_en}_{now.strftime('%Y%m%d_%H%M%S')}.csv"
 
     # DataFrameをCSVファイルとして書き出し（エンコーディング：CP932）
     df.to_csv(filename, index=False, encoding="CP932", errors="ignore")
@@ -106,3 +104,6 @@ for index, row in url_data.iterrows():
 
     # スクレイピングが完了したことを示すメッセージを表示
     print("Scraping finished")
+
+    # データをクリア
+    data = []
