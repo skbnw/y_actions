@@ -8,27 +8,25 @@ on:
 jobs:
   scrape:
     runs-on: ubuntu-latest
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v2
+    env:
+      MY_VARIABLE: "my_value"  # 任意の変数名と値を設定します
 
-      - name: Set up Python
-        uses: actions/setup-python@v3
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-python@v2
         with:
           python-version: '3.9'
-
-      - name: Install dependencies
-        run: pip install notebook requests bs4 dropbox pandas
-
-      - name: Run scraper and save files
+      - run: pip install notebook requests bs4 dropbox pandas
+      - name: Create directory for artifacts
         run: |
-          today=$(date +'%Y%m%d_%H%M')
           month=$(date +'%Y%m')
-          mkdir -p "html-pickup_${today}"
-          python topics_scraper_all_Ver.5.1.py
+          mkdir -p "html-pickup_${month}"
+      - name: Run scraper
+        run: python topics_scraper_all_Ver.5.1.py
 
-      - name: Create artifact
+      # CSVファイルをアーティファクトとしてアップロード
+      - name: Upload artifacts
         uses: actions/upload-artifact@v2
         with:
-          name: html-pickup-artifact
-          path: "html-pickup_${month}"
+          name: html_pickup_artifacts
+          path: html-pickup_${month}
