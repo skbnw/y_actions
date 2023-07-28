@@ -22,7 +22,7 @@ jobs:
 
       - name: Get current date
         id: get_date
-        run: echo "TODAY=$(date +'%Y%m')" >> $GITHUB_ENV
+        run: echo "TODAY=$(date +'%Y%m_%H%M')" >> $GITHUB_ENV
 
       - name: Create directory if not exists
         run: mkdir -p html-pickup_${TODAY}
@@ -43,12 +43,8 @@ jobs:
 
       - name: Archive new files
         run: |
-          # ターゲットフォルダを作成します
-          mkdir -p html-pickup_${TODAY}
-          
           # 新たに加わったファイルをターゲットフォルダにコピーします
-          cp path/to/new/file1.html html-pickup_${TODAY}
-          cp path/to/new/file2.html html-pickup_${TODAY}
+          cp topics_scraper_all_Ver.5.1.py html-pickup_${TODAY}
           # 他の必要なファイルも同様にコピーしてください
 
           # 新たに加わったファイルをアーカイブします
