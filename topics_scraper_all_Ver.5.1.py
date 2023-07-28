@@ -24,7 +24,15 @@ urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
 # URLのリストを作成
 url_list = [
-    {"ctgry": "top-picks", "url": "https://news.yahoo.co.jp/topics/top-picks"}
+    {"ctgry": "top-picks", "url": "https://news.yahoo.co.jp/topics/top-picks"}, 
+    {"ctgry": "domestic", "url": "https://news.yahoo.co.jp/topics/domestic"},
+    {"ctgry": "world", "url": "https://news.yahoo.co.jp/topics/world"},
+    {"ctgry": "business", "url": "https://news.yahoo.co.jp/topics/business"},
+    {"ctgry": "entertainment", "url": "https://news.yahoo.co.jp/topics/entertainment"},
+    {"ctgry": "sports", "url": "https://news.yahoo.co.jp/topics/sports"},
+    {"ctgry": "it", "url": "https://news.yahoo.co.jp/topics/it"},
+    {"ctgry": "science", "url": "https://news.yahoo.co.jp/topics/science"},
+    {"ctgry": "local", "url": "https://news.yahoo.co.jp/topics/local"}
 ]
 
 interval = 3  # インターバル（秒）
