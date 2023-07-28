@@ -41,8 +41,18 @@ jobs:
           git add .
           git commit -m "Latest data"
 
-      - name: Archive files
-        run: tar czvf html-pickup_${TODAY}.tar.gz html-pickup_${TODAY}
+      - name: Archive new files
+        run: |
+          # ターゲットフォルダを作成します
+          mkdir -p html-pickup_${TODAY}
+          
+          # 新たに加わったファイルをターゲットフォルダにコピーします
+          cp path/to/new/file1.html html-pickup_${TODAY}
+          cp path/to/new/file2.html html-pickup_${TODAY}
+          # 他の必要なファイルも同様にコピーしてください
+
+          # 新たに加わったファイルをアーカイブします
+          tar czvf html-pickup_${TODAY}.tar.gz html-pickup_${TODAY}
 
       - name: Upload Artifacts
         uses: actions/upload-artifact@v3
