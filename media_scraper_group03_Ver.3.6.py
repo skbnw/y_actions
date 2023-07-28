@@ -25,7 +25,7 @@ import os
 urllib3.disable_warnings()
 
 # URLのリストを含むCSVファイルを読み込む
-url_data = pd.read_csv("url/media_url_groupTEST.csv")
+url_data = pd.read_csv("url/media_url_group.csv")
 
 interval = 3  # インターバル（秒）
 
