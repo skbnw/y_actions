@@ -33,7 +33,7 @@ jobs:
 
       - name: Create target folder
         run: |
-          # 今日の日付を取得してフォルダ名を作成
+          # 今日の日付を取得してフォルダ名を作成（フォルダ名は%Y%m形式）
           today=$(date +'%Y%m')
           mkdir -p html-pickup_${today}
 
@@ -41,14 +41,19 @@ jobs:
         run: |
           # スクレイプしたファイルをターゲットフォルダにコピーします
           for file in $SCRAPED_FILES; do
-            cp $file html-pickup_${GITHUB_ENV_TODAY}
+            if [ -f "$file" ]; then
+              cp $file html-pickup_${today}
+            else
+              echo "File not found: $file"
+            fi
           done
 
       - name: Archive new files
-        run: tar czvf html-pickup_${GITHUB_ENV_TODAY}.tar.gz html-pickup_${GITHUB_ENV_TODAY}
+        run: tar czvf html-pickup_${today}.tar.gz html-pickup_${today}
 
       - name: Upload Artifacts
         uses: actions/upload-artifact@v2
         with:
-          name: html_pickup_${GITHUB_ENV_TODAY}
-          path: html-pickup_${GITHUB_ENV_TODAY}.tar.gz
+          name: html_pickup_${today}
+          path: html-pickup_${today}.tar.gz
+
