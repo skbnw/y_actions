@@ -2,7 +2,7 @@ name: html-pickupALL02
 
 on:
   schedule:
-    - cron: "0 */24 * * *"
+    - cron: "0 */24 * * *"  # 毎日実行（24時間ごとに）
   workflow_dispatch:
 
 jobs:
@@ -12,19 +12,26 @@ jobs:
       MY_VARIABLE: "my_value"  # 任意の変数名と値を設定します
 
     steps:
-      - uses: actions/checkout@v2
-      - uses: actions/setup-python@v2
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Setup Python
+        uses: actions/setup-python@v2
         with:
           python-version: '3.9'
-      - run: pip install notebook requests bs4 dropbox pandas
+
+      - name: Install Python dependencies
+        run: |
+          pip install notebook requests bs4 dropbox pandas
+
       - name: Create directory for artifacts
         run: |
           month=$(date +'%Y%m')
           mkdir -p "html-pickup_${month}"
+
       - name: Run scraper
         run: python topics_scraper_all_Ver.5.1.py
 
-      # CSVファイルをコミットしてプッシュ
       - name: Commit and push CSV files
         run: |
           month=$(date +'%Y%m')
