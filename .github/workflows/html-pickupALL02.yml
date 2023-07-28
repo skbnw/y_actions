@@ -2,7 +2,7 @@ name: html-pickupALL
 
 on:
   schedule:
-    - cron: "0 */24 * * *"  
+    - cron: "0 */24 * * *"
   workflow_dispatch:
 
 jobs:
@@ -24,8 +24,8 @@ jobs:
         id: get_date
         run: echo "TODAY=$(date +'%Y%m')" >> $GITHUB_ENV
 
-      - name: Create directory
-        run: mkdir html-pickup_${TODAY}
+      - name: Create directory if not exists
+        run: mkdir -p html-pickup_${TODAY}
 
       - name: Save state
         run: echo "name=$MY_VARIABLE" >> $GITHUB_STATE
