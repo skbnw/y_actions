@@ -35,7 +35,7 @@ for index, row in url_data.iterrows():
     media_en = row["media_en"]
     url = row["url"]
     
-    # groupが"a", "b", "c", "s"のいずれかの場合はスクレイプ
+    # group01 "a", "b", "c", "s"のいずれかの場合はスクレイプ
     if group not in ["a", "b", "c", "s"]:
         continue
 
