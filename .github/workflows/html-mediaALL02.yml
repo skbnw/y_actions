@@ -1,42 +1,29 @@
-name: html-mediaALL_02
+name: html-mediaALL_01
 
 on:
   schedule:
-    - cron: "0 */120 * * *"
+    - cron: "0 */24 * * *"
   workflow_dispatch:
-  
+
 jobs:
-  run_scraper:
+  scrape:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
-
-      - name: Set up Python
-        uses: actions/setup-python@v2
+      - uses: actions/checkout@v2
+      - uses: actions/setup-python@v2
         with:
-          python-version: '3.9.x'
-
-      - name: Upgrade pip
-        run: python -m pip install --upgrade pip
-
-      - name: Install dependencies
-        run: |
-          python -m pip install notebook requests bs4 dropbox pandas
-          
+          python-version: '3.9'
+      - name: Install required libraries
+        run: pip install notebook requests bs4 dropbox pandas
       - name: Run scraper
         run: python media_scraper_group02_Ver.3.6.py
 
+      # CSVファイルをコミットしてプッシュ
       - name: Add and commit
-        id: add_commit
-        uses: EndBug/add-and-commit@v8
-        with:
-          committer_name: Automated
-          committer_email: actions@users.noreply.github.com
-          message: "Latest data"
-
-      - name: Pull changes
-        run: git pull origin main
-
-      - name: Push changes
-        run: git push origin main
+        run: |
+          week=$(date +'%Y%m_%W')
+          git config user.name "Automated"
+          git config user.email "actions@users.noreply.github.com"
+          git add html_mediaALL_${week}/
+          git commit -m "Latest data"
+          git push
