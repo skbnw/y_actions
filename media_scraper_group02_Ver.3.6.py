@@ -1,24 +1,13 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-# In[1]:
-
-
 # ヤフー出稿メディア700超に、出稿頻度、ジャンルなどを含めてグループ分けしてスクレイプします。
 # フォルダは、月単位で生成されファイルが追加されていきます
-# a　主要ニュース系 group
-# b　地方紙　雑誌
-# c　地方テレビ局
-# d　その他
-# e　エンタメ系
-# f　その他
-# g　その他
-# m　マガジン系
-# s　スポーツ紙
+# group01: a_主要ニュース系; b_地方紙&雑誌; c_地方テレビ局;s_スポーツ紙
+# group02: d_その他; e_エンタメ系; f_その他; g_その他; m_マガジン系
 
-
-# In[1]:
-
+#!/usr/bin/env python
+# coding: utf-8
 
 import requests
 from bs4 import BeautifulSoup
@@ -49,8 +38,8 @@ for index, row in url_data.iterrows():
     media_en = row["media_en"]
     url = row["url"]
     
-    # groupが"a", "b", "c","s"の場合はスキップ
-    if group in ["a", "b", "c" ,"s"]:
+    # groupが"a", "b", "c", "s"以外の場合はスクレイプ
+    if group in ["a", "b", "c", "s"]:
         continue
 
     # スクレイピングの処理を実行
@@ -98,7 +87,7 @@ for index, row in url_data.iterrows():
     df = pd.DataFrame(data, columns=["media_en", "title_articles", "link_articles", "date_original"])
 
     # 保存するディレクトリが存在しない場合は作成する
-    folder_name = now.strftime("html_mediaALL_%Y%m_%W")
+    folder_name = now.strftime("html_mediaALL02_%Y%m_%W")
     os.makedirs(folder_name, exist_ok=True)
 
     # ファイル名を設定
@@ -115,10 +104,3 @@ for index, row in url_data.iterrows():
 
     # データをクリア
     data = []
-
-
-# In[ ]:
-
-
-
-
