@@ -34,7 +34,7 @@ jobs:
       - name: Create target folder
         run: |
           # 今日の日付を取得してフォルダ名を作成
-          today=$(date +'%Y%m_%H%M')
+          today=$(date +'%Y%m')
           mkdir -p html-pickup_${today}
 
       - name: Copy generated files to target folder
