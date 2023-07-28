@@ -3,15 +3,9 @@
 
 # ヤフー出稿メディア700超に、出稿頻度、ジャンルなどを含めてグループ分けしてスクレイプします。
 # フォルダは、月単位で生成されファイルが追加されていきます
-# a　主要ニュース系 group
-# b　地方紙　雑誌
-# c　地方テレビ局
-# d　その他
-# e　エンタメ系
-# f　その他
-# g　その他
-# m　マガジン系
-# s　スポーツ紙
+# group01: a_主要ニュース系; b_地方紙&雑誌; c_地方テレビ局;s_スポーツ紙
+# group02: d_その他; e_エンタメ系; f_その他; g_その他; m_マガジン系
+
 import requests
 from bs4 import BeautifulSoup
 import pandas as pd
@@ -90,7 +84,7 @@ for index, row in url_data.iterrows():
     df = pd.DataFrame(data, columns=["media_en", "title_articles", "link_articles", "date_original"])
 
     # 保存するディレクトリが存在しない場合は作成する
-    folder_name = now.strftime("html_mediaALL_%Y%m_%W")
+    folder_name = now.strftime("html_mediaALL01_%Y%m_%W")
     os.makedirs(folder_name, exist_ok=True)
 
     # ファイル名を設定
