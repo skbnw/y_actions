@@ -1,4 +1,4 @@
-name: html-pickupALL02
+name: html-pickupALL
 
 on:
   schedule:
@@ -20,6 +20,13 @@ jobs:
       - name: Run scraper
         run: python topics_scraper_all_Ver.5.1.py
 
+      - name: Get current date
+        id: get_date
+        run: echo "TODAY=$(date +'%Y%m')" >> $GITHUB_ENV
+
+      - name: Create directory
+        run: mkdir html-pickup_${TODAY}
+
       - name: Save state
         run: echo "name=$MY_VARIABLE" >> $GITHUB_STATE
 
@@ -33,3 +40,12 @@ jobs:
           git config --global user.email "actions@users.noreply.github.com"
           git add .
           git commit -m "Latest data"
+
+      - name: Archive files
+        run: tar czvf html-pickup_${TODAY}.tar.gz html-pickup_${TODAY}
+
+      - name: Upload Artifacts
+        uses: actions/upload-artifact@v2
+        with:
+          name: html_pickup_${TODAY}
+          path: html-pickup_${TODAY}.tar.gz
