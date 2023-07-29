@@ -26,4 +26,5 @@ jobs:
           git config user.email "actions@users.noreply.github.com"
           git add html_mediaALL_${week}/
           git commit -m "Latest data"
+          git pull origin main
           git push
