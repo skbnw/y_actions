@@ -9,23 +9,27 @@ jobs:
   scrape:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
-      - uses: actions/setup-python@v2
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Setup Python
+        uses: actions/setup-python@v2
         with:
           python-version: '3.9'
+
       - name: Install required libraries
         run: pip install notebook requests bs4 dropbox pandas
+
       - name: Run scraper
         run: python media_scraper_group_b_Ver.3.6.py
 
-      # CSVファイルをコミットしてプッシュ
-      - name: Add and commit
+      - name: Add and commit changes
         run: |
           week=$(date +'%Y%m_%W')
           git config user.name "Automated"
           git config user.email "actions@users.noreply.github.com"
           git add html_mediaALL_${week}/
-          git commit -m "Latest data"
-          set -e  # エラーチェックを追加
-          git pull origin main --no-edit --ff-only  # マージを行う（--no-editオプションでマージコミットメッセージの編集を回避）
+          git commit -m "Latest data - $(date +'%Y-%m-%d %H:%M:%S')"
+          git fetch origin
+          git pull origin main --ff-only  # Avoid conflicts when pulling
           git push
