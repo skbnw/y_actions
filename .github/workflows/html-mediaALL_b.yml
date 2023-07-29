@@ -1,4 +1,4 @@
-name: html-mediaALL_02
+name: html-mediaALL_b
 
 on:
   schedule:
@@ -16,7 +16,7 @@ jobs:
       - name: Install required libraries
         run: pip install notebook requests bs4 dropbox pandas
       - name: Run scraper
-        run: python media_scraper_group02_Ver.3.6.py
+        run: python media_scraper_group_b_Ver.3.6.py
 
       # CSVファイルをコミットしてプッシュ
       - name: Add and commit
