@@ -19,7 +19,7 @@ import os
 urllib3.disable_warnings()
 
 # URLのリストを含むCSVファイルを読み込む
-url_data = pd.read_csv("url/media_url_groupTEST.csv")
+url_data = pd.read_csv("url/media_url_group.csv")
 
 interval = 3  # インターバル（秒）
 
@@ -36,7 +36,7 @@ for index, row in url_data.iterrows():
     url = row["url"]
     
     # group指定 "a"グループをスクレイプ　, "b", "c", "s"
-    if group not in ["a"]:
+    if group not in ["f"]:
         continue
 
     # スクレイピングの処理を実行
