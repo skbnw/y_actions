@@ -1,20 +1,12 @@
-[html_mediaALL]  <br>
-media_scraper_group01_Ver.3.6.py: A,B,C,S:every 24 hours  <br>
-media_scraper_group02_Ver.3.6.py: other than A,B,C,S: every 120 hours(5 days)  <br>
-
-行ラベル	データの個数 / media_jp
-a	25
-b	40
-c	75
-d	60
-e	99
-f	200
-g	100
-h	119
-![image](https://github.com/skbnw/actions_test/assets/30197022/30aadca3-eba8-46ae-8b31-6ea97a8027e6)
-
-
-
+[html_mediaALL]   media_jp 718 <br>
+media_scraper_group_a_Ver.3.6.py: every 24 hours :a	25 <br>
+media_scraper_group_b_Ver.3.6.py: every 24 hours :b	40 <br>
+media_scraper_group_c_Ver.3.6.py: every 24 hours :c	75 <br>
+media_scraper_group_d_Ver.3.6.py: every 24 hours :d	60 <br>
+media_scraper_group_e_Ver.3.6.py: every 24 hours :e	99 <br>
+media_scraper_group_f_Ver.3.6.py: every 24 hours :f	200 <br>
+media_scraper_group_g_Ver.3.6.py: every 24 hours :g	100 <br>
+media_scraper_group_h_Ver.3.6.py: every 24 hours :h	119 <br>
 
 [html-pickup]  <br>
 topics_scraper_all_Ver.5.1.py: every 48 hours  <br> 
