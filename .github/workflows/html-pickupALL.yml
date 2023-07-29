@@ -2,7 +2,7 @@ name: html-pickupALL
 
 on:
   schedule:
-    - cron: "0 0 * * *"  # 毎日実行（24時間ごとに）
+  　- cron: "0 */8 * * *"  # 8時間ごとに実行
   workflow_dispatch:
 
 jobs:
