@@ -27,5 +27,5 @@ jobs:
           git add html_mediaALL_${week}/
           git commit -m "Latest data"
           set -e  # エラーチェックを追加
-          git pull origin main --ff-only  # プル時に競合を避ける
+          git pull origin main --no-edit --ff-only  # マージを行う（--no-editオプションでマージコミットメッセージの編集を回避）
           git push
