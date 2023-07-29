@@ -3,8 +3,7 @@
 
 # ヤフー出稿メディア700超に、出稿頻度、ジャンルなどを含めてグループ分けしてスクレイプします。
 # フォルダは、月単位で生成されファイルが追加されていきます
-# group01: a_主要ニュース系; b_地方紙&雑誌; c_地方テレビ局;s_スポーツ紙
-# group02: d_その他; e_エンタメ系; f_その他; g_その他; m_マガジン系
+
 
 import requests
 from bs4 import BeautifulSoup
@@ -36,7 +35,7 @@ for index, row in url_data.iterrows():
     url = row["url"]
     
     # group指定 "a"グループをスクレイプ　, "b", "c", "s"
-    if group not in ["a"]:
+    if group not in ["b"]:
         continue
 
     # スクレイピングの処理を実行
