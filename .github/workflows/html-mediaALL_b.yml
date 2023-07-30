@@ -19,6 +19,12 @@ jobs:
 
       - name: Install required libraries
         run: pip install notebook requests bs4 dropbox pandas
+        
+      - name: Create directory for artifacts
+        run: |
+          month=$(date +'%Y%m')
+          week=$(date +'%Y%m_%W')
+          mkdir -p "html-pickup_${month}"
 
       - name: Run scraper
         run: python media_scraper_group_b_Ver.3.6.py
