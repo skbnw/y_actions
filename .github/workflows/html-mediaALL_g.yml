@@ -21,13 +21,14 @@ jobs:
         run: pip install notebook requests bs4 dropbox pandas
 
       - name: Run scraper
-        run: python media_scraper_group_b_Ver.3.6.py
+        run: python media_scraper_group_g_Ver.3.6.py
 
       - name: Add and commit changes
         run: |
           month=$(date +'%Y%m')
           git config user.name "Automated"
           git config user.email "actions@users.noreply.github.com"
+          mkdir -p html_mediaALL_g_${month}/
           git add html_mediaALL_g_${month}/
           git commit -m "Latest data_g - $(date +'%Y-%m-%d %H:%M:%S')"
           git fetch origin
