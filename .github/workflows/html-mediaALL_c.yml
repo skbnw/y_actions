@@ -28,8 +28,8 @@ jobs:
           month=$(date +'%Y%m')
           git config user.name "Automated"
           git config user.email "actions@users.noreply.github.com"
-          mkdir -p html_mediaALL_c_${month}/
-          git add html_mediaALL_c_${month}/
+          mkdir -p html-mediaALL_c_${month}/
+          git add html-mediaALL_c_${month}/
           git commit -m "Latest data_c - $(date +'%Y-%m-%d %H:%M:%S')"
           git fetch origin
           git pull origin main --ff-only  # Avoid conflicts when pulling
