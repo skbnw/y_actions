@@ -2,7 +2,7 @@ name: html-mediaALL_g
 
 on:
   schedule:
-    - cron: "0 */24 * * *"
+    - cron: "0 3 * * 1"
   workflow_dispatch:
 
 jobs:
