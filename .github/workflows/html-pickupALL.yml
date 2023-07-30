@@ -35,6 +35,7 @@ jobs:
           month=$(date +'%Y%m')
           git config user.name "Automated"
           git config user.email "actions@users.noreply.github.com"
+          mkdir -p html-pickup_${month}/
           git add html-pickup_${month}/
           git commit -m "Update csv files - $(date +'%Y-%m-%d')"
           set -e  # Add error checking
