@@ -24,8 +24,8 @@ jobs:
           month=$(date +'%Y%m')
           git config user.name "Automated"
           git config user.email "actions@users.noreply.github.com"
-          mkdir -p html_mediaALL_a_${month}/
-          git add html_mediaALL_a_${month}/
+          mkdir -p html-mediaALL_a_${month}/
+          git add html-mediaALL_a_${month}/
           git commit -m "Latest data_a - $(date +'%Y-%m-%d %H:%M:%S')"
           git pull origin main --ff-only  # プル時に競合を避ける
           git push
