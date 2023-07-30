@@ -25,11 +25,11 @@ jobs:
 
       - name: Add and commit changes
         run: |
-          week=$(date +'%Y%m_%W')
+          month=$(date +'%Y%m')
           git config user.name "Automated"
           git config user.email "actions@users.noreply.github.com"
           mkdir -p html_mediaALL_b_${month}/
-          git add html_mediaALL_b_${week}/
+          git add html_mediaALL_b_${month}/
           git commit -m "Latest data_b - $(date +'%Y-%m-%d %H:%M:%S')"
           git fetch origin
           git pull origin main --ff-only  # Avoid conflicts when pulling
