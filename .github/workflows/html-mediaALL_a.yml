@@ -26,6 +26,12 @@ jobs:
         run: pip install notebook requests bs4 dropbox pandas
       - name: Run scraper
         run: python media_scraper_group_a_Ver.3.6.py
+        
+      - name: Set Git Config
+        run: |
+          git config user.name "Automated"
+          git config user.email "actions@users.noreply.github.com"
+        working-directory: ${{ github.workspace }}
 
       # CSVファイルをコミットしてプッシュ
       - name: Commit and push csv files
