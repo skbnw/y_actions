@@ -9,28 +9,39 @@ jobs:
   scrape:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
-
-      - name: Setup Python
-        uses: actions/setup-python@v2
+      - uses: actions/checkout@v2
+      - uses: actions/setup-python@v2
         with:
           python-version: '3.9'
-
+      - name: Create directory
+        run: |
+          current_month=$(date +'%Y%m')
+          current_week=$(date +'%Y_%W') # 1-51
+          day_offset=$(( 7 - current_day_of_week ))
+          current_time=$(date +'%Y%m%d_%H%M')
+          folder_name="html-mediaALL_d_${current_week}"
+          mkdir -p $folder_name
+      
       - name: Install required libraries
         run: pip install notebook requests bs4 dropbox pandas
-
       - name: Run scraper
         run: python media_scraper_group_d_Ver.3.6.py
 
-      - name: Add and commit changes
+      - name: Set Git Config
         run: |
-          month=$(date +'%Y%m')
           git config user.name "Automated"
           git config user.email "actions@users.noreply.github.com"
-          mkdir -p html-mediaALL_d_${month}/
-          git add html-mediaALL_d_${month}/
-          git commit -m "Latest data_d - $(date +'%Y-%m-%d %H:%M:%S')"
-          git fetch origin
-          git pull origin main --ff-only  # Avoid conflicts when pulling
+        working-directory: ${{ github.workspace }}
+
+      # リモートリポジトリの変更を取り込む
+      - name: Pull remote changes
+        run: git pull origin main
+        working-directory: ${{ github.workspace }}
+
+      # CSVファイルをコミットしてプッシュ
+      - name: Commit and push csv files
+        run: |
+          git add .
+          git commit -m "Update csv files"
           git push
+        working-directory: ${{ github.workspace }}
