@@ -29,15 +29,16 @@ jobs:
       - name: Run scraper
         run: python media_scraper_group_b_Ver.3.6.py
       
-      - name: Set Git Config
+      
+      - name: Commit and push CSV files
         run: |
+          month=$(date +'%Y%m')
           git config user.name "Automated"
           git config user.email "actions@users.noreply.github.com"
-        working-directory: ${{ github.workspace }}
-        
-      - name: Commit and push XML files
-        run: |
-          git add .
-          git commit -m "Update csv files"
+          git add html-mediaALL_b_${month}/
+          git commit -m "Update csv files - $(date +'%Y-%m-%d')"
+          set -e  # Add error checking
+          git merge --no-ff
+          git fetch origin
+          git pull origin main --ff-only  # Avoid conflicts when pulling
           git push
-        working-directory: ${{ github.workspace }}
