@@ -5,6 +5,10 @@ on: push
 jobs:
   publish:
     runs-on: ubuntu-latest
+    env:
+      AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+      AWS_REGION: "ap-northeast-1"
     steps:
       - name: Checkout
         uses: actions/checkout@v2
@@ -15,20 +19,7 @@ jobs:
       - name: Extract yyyymm from Current Date in GMT
         run: echo "yyyymm=$(date +'%Y%m' --utc)" >> $GITHUB_ENV
 
-      # AWS CLIの設定
-      - name: Configure AWS CLI
-        env:
-          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-        run: |
-          aws configure set aws_access_key_id $AWS_ACCESS_KEY_ID
-          aws configure set aws_secret_access_key $AWS_SECRET_ACCESS_KEY
-          aws configure set default.region ap-northeast-1
-
       # AWS S3への新しいファイルのアップロード
       - name: Upload New Files to AWS S3
-        env:
-          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         run: |
           aws s3 sync --exact-timestamps --size-only ./html-pickup_${{ env.yyyymm }} s3://html-pickup/${{ env.yyyymm }}
