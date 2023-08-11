@@ -11,9 +11,9 @@ jobs:
         with:
           fetch-depth: 1
 
-      # 追加: yyyymmを動的に設定する部分（例: タグから取得）
-      - name: Extract yyyymm from Git Tag
-        run: echo "yyyymm=${GITHUB_REF#refs/tags/v}" >> $GITHUB_ENV
+      # 追加: yyyymmを動的に設定する部分（例: 現在の日付から取得）
+      - name: Extract yyyymm from Current Date
+        run: echo "yyyymm=$(date +'%Y%m')" >> $GITHUB_ENV
 
       - name: Upload New Files to AWS S3
         run: |
