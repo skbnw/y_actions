@@ -1,0 +1,25 @@
+name: AWS S3 Upload MediaALL Files
+
+on: push
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    env:
+      AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+      AWS_REGION: "ap-northeast-1"
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0 # リポジトリの完全な履歴を取得
+
+      # ロンドン時間で現在の日付からyyyymmを動的に設定
+      - name: Extract yyyymm from Current Date in GMT
+        run: echo "yyyymm=$(date +'%Y%m' --utc)" >> $GITHUB_ENV
+
+      # AWS S3への新しいファイルのアップロード
+      - name: Upload New Files to AWS S3
+        run: |
+          aws s3 sync --exact-timestamps --size-only ./html_mediaALL_a_202308_32 s3://html-media-all/${{ env.yyyymm }}
