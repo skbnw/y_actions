@@ -1,6 +1,8 @@
 name: AWS S3 Upload MediaALL Files
 
-on: push
+on:
+  schedule:
+    - cron: '0 */3 * * *' # 3時間おきに実行
 
 jobs:
   publish:
