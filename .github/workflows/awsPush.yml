@@ -7,17 +7,18 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v1
+        uses: actions/checkout@v2
         with:
-          fetch-depth: 1
+          fetch-depth: 0 # リポジトリの完全な履歴を取得
 
-      # 追加: yyyymmを動的に設定する部分（例: 現在の日付から取得）
-      - name: Extract yyyymm from Current Date
-        run: echo "yyyymm=$(date +'%Y%m')" >> $GITHUB_ENV
+      # UTC（協定世界時）時間で現在の日付からyyyymmを動的に設定
+      - name:  Extract yyyymm from Current Date in GMT
+        run: echo "yyyymm=$(date +'%Y%m' --utc)" >> $GITHUB_ENV
 
+      # AWS CLIの設定とS3への新しいファイルのアップロード
       - name: Upload New Files to AWS S3
         run: |
-          aws s3 sync --exact-timestamps --size-only ./html-pickup_202308 s3://html-pickup
+          aws s3 sync --exact-timestamps --size-only ./html-pickup_${{ env.yyyymm }} s3://html-pickup/${{ env.yyyymm }}
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
