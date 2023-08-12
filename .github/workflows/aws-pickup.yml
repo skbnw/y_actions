@@ -24,4 +24,4 @@ jobs:
       # AWS S3への新しいファイルのアップロード
       - name: Upload New Files to AWS S3
         run: |
-          aws s3 sync --exact-timestamps --size-only ./html-pickup_${{ env.yyyymm }} s3://html-pickup/${{ env.yyyymm }}
+          aws s3 sync --storage-class ONEZONE_IA --exact-timestamps --size-only ./html-pickup_${{ env.yyyymm }} s3://html-pickup/${{ env.yyyymm }}
