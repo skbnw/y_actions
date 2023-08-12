@@ -29,5 +29,5 @@ jobs:
       - name: Upload New Files to AWS S3
         run: |
           for letter in {a..h}; do
-            aws s3 sync --exact-timestamps --size-only ./html_mediaALL_${letter}_${{ env.yyyymm }}_${{ env.current_week }} s3://html-media-all/${{ env.yyyymm }}_${{ env.current_week }}
+            aws s3 sync --storage-class ONEZONE_IA --exact-timestamps --size-only ./html_mediaALL_${letter}_${{ env.yyyymm }}_${{ env.current_week }} s3://html-media-all/${{ env.yyyymm }}_${{ env.current_week }}
           done
