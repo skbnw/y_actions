@@ -1,7 +1,5 @@
 name: AWS S3 Upload MediaALL Files
 
-
-
 jobs:
   publish:
     runs-on: ubuntu-latest
