@@ -1,9 +1,5 @@
 name: AWS S3 Upload Pickup Files
 
-on:
-  schedule:
-    - cron: '0 */12 * * *' # 12時間おきに実行
-
 jobs:
   publish:
     runs-on: ubuntu-latest
