@@ -2,7 +2,7 @@ name: html-mediaALL_f
 
 on:
   schedule:
-    - cron: "0 7 * * *" # 毎日07時に実行
+    - cron: "0 7 */2 * *" # 毎日07時に実行
   workflow_dispatch:
 
 jobs:
