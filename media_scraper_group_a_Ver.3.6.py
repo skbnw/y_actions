@@ -79,7 +79,7 @@ for index, row in url_data.iterrows():
             break
 
     # 取得した情報をDataFrameに格納
-    df = pd.DataFrame(data, columns=["media_en", "title_articles", "link_articles", "date_original"])
+    df = pd.DataFrame(data, columns=["media_en", "media_jp", "title_articles", "link_articles", "date_original"])
 
     # 保存するディレクトリが存在しない場合は作成する
     folder_name = now.strftime("html_mediaALL_a_%Y%m_%W")
