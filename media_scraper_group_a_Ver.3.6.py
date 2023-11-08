@@ -1,9 +1,3 @@
-#!/usr/bin/env python
-# coding: utf-8
-
-# ヤフー出稿メディア700超に、出稿頻度、ジャンルなどを含めてグループ分けしてスクレイプします。
-# フォルダは、月単位で生成されファイルが追加されていきます
-
 import requests
 from bs4 import BeautifulSoup
 import pandas as pd
@@ -40,8 +34,7 @@ for index, row in url_data.iterrows():
     # スクレイピングの処理を実行
     start_page = 1
     end_page = 100
-    page = start_page
-
+    page = start_page  # page変数を初期化
     while page <= end_page:
         url_with_page = f"{url}?page={page}"
 
@@ -62,7 +55,7 @@ for index, row in url_data.iterrows():
             date_original = item.find("time", class_="newsFeed_item_date").text.strip()
 
             # media_enをデータに追加
-            data.append([media_en, title_articles, link_articles, date_original])
+            data.append([media_en, media_jp, title_articles, link_articles, date_original])
 
         # インターバルを待つ
         time.sleep(interval)
