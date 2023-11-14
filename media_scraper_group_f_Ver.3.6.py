@@ -75,7 +75,7 @@ for index, row in url_data.iterrows():
     df = pd.DataFrame(data, columns=["media_en", "media_jp", "title_articles", "link_articles", "date_original"])
 
     # 保存するディレクトリが存在しない場合は作成する
-    folder_name = now.strftime("html_mediaALL_a_%Y%m_%W")
+    folder_name = now.strftime("html_mediaALL_f_%Y%m_%W")
     os.makedirs(folder_name, exist_ok=True)
 
     # ファイル名を設定
