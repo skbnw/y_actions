@@ -8,8 +8,6 @@ on:
 jobs:
   scrape:
     runs-on: ubuntu-latest
-    env:
-      MY_VARIABLE: "my_value"  # 任意の変数名と値を設定します
 
     steps:
       - name: Checkout repository
