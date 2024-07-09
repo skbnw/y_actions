@@ -76,7 +76,7 @@ for url_info in url_list:
                 soup_item = BeautifulSoup(response_item.text, "html.parser")
 
                 media_element = soup_item.select_one("article div a span span")
-                media_jp = media_element.text if media_element else ""
+                media_jp = media_element.text if media_element else "Media info not found"
 
                 # itemのlink先にアクセスしてurl_detailを取得
                 url_detail_element = soup_item.select_one("article div div p a")
