@@ -1,16 +1,6 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-# In[1]:
-
-
-# ヤフーニュースのトピ入りニュースを全9カテゴリー毎に取得します。
-# 保存フォルダは月単位で生成
-
-
-# In[2]:
-
-
 import requests
 from bs4 import BeautifulSoup
 import pandas as pd
@@ -60,9 +50,14 @@ for url_info in url_list:
     while page <= end_page:
         url = f"{base_url}?page={page}"
 
-        # HTTP GETリクエストを送信してHTMLを取得（SSL証明書検証エラーを無効化）
-        response = requests.get(url, verify=False)
-        html = response.text
+        try:
+            # HTTP GETリクエストを送信してHTMLを取得（SSL証明書検証エラーを無効化）
+            response = requests.get(url, verify=False)
+            response.raise_for_status()
+            html = response.text
+        except requests.exceptions.RequestException as e:
+            print(f"Error fetching {url}: {e}")
+            break
 
         # BeautifulSoupを使用してHTMLをパース
         soup = BeautifulSoup(html, "html.parser")
@@ -74,31 +69,37 @@ for url_info in url_list:
         for item in items:
             link_short = item["href"]
 
-            # itemのlink先にアクセスしてmediaを取得
-            response_item = requests.get(link_short, verify=False)
-            soup_item = BeautifulSoup(response_item.text, "html.parser")
-            media_element = soup_item.select_one("span > a > span > span")
-            media_jp = media_element.text if media_element is not None else ""
+            try:
+                # itemのlink先にアクセスしてmediaを取得
+                response_item = requests.get(link_short, verify=False)
+                response_item.raise_for_status()
+                soup_item = BeautifulSoup(response_item.text, "html.parser")
 
-            # itemのlink先にアクセスしてurl_detailを取得
-            url_detail_element = soup_item.select_one("article div div p a")
-            link_articles = url_detail_element["href"] if url_detail_element is not None else ""
+                media_element = soup_item.select_one("article div a span span")
+                media_jp = media_element.text if media_element else ""
 
-            # "/images"を含めて削除
-            link_articles = re.sub(r"/images.*", "", link_articles)
+                # itemのlink先にアクセスしてurl_detailを取得
+                url_detail_element = soup_item.select_one("article div div p a")
+                link_articles = url_detail_element["href"] if url_detail_element else ""
 
-            # itemのlink先にアクセスしてtitle_longを取得
-            title_long_element = soup_item.select_one("a > p")
-            title_articles = title_long_element.text if title_long_element is not None else ""
+                # "/images"を含めて削除
+                link_articles = re.sub(r"/images.*", "", link_articles)
 
-            title_element = item.find("div", class_="newsFeed_item_title")
-            title_pickup = title_element.text.strip() if title_element is not None else ""
+                # itemのlink先にアクセスしてtitle_longを取得
+                title_long_element = soup_item.select_one("a > p")
+                title_articles = title_long_element.text if title_long_element else ""
 
-            date_element = item.find("time", class_="newsFeed_item_date")
-            date_original = date_element.text.strip() if date_element is not None else ""
+                title_element = item.find("div", class_="newsFeed_item_title")
+                title_pickup = title_element.text.strip() if title_element else ""
 
-            # ctgryをデータに追加
-            data.append([ctgry, media_jp, title_pickup, title_articles, link_short, link_articles, date_original])
+                date_element = item.find("time", class_="newsFeed_item_date")
+                date_original = date_element.text.strip() if date_element else ""
+
+                # ctgryをデータに追加
+                data.append([ctgry, media_jp, title_pickup, title_articles, link_short, link_articles, date_original])
+            except requests.exceptions.RequestException as e:
+                print(f"Error fetching item link {link_short}: {e}")
+                continue
 
         # インターバルを待つ
         time.sleep(interval)
@@ -125,10 +126,3 @@ for url_info in url_list:
 
     # 作業完了メッセージをプリント
     print(f"Scraping complete for {ctgry}. File saved: {file_path}")
-
-
-# In[ ]:
-
-
-
-
