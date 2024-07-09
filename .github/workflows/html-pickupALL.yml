@@ -2,7 +2,7 @@ name: html-pickupALL
 
 on:
   schedule:
-    - cron: "0 1 */2 * *"  # 毎日01時に実行
+    - cron: "0 1 */2 * *"  # 2日ごとに01時に実行
   workflow_dispatch:
 
 jobs:
@@ -28,6 +28,7 @@ jobs:
         run: |
           month=$(date +'%Y%m')
           mkdir -p "html-pickup_${month}"
+
       - name: Run scraper
         run: python topics_scraper_all_Ver.5.1.py
 
@@ -36,10 +37,8 @@ jobs:
           month=$(date +'%Y%m')
           git config user.name "Automated"
           git config user.email "actions@users.noreply.github.com"
+          git fetch origin
+          git pull origin main
           git add html-pickup_${month}/
           git commit -m "Update csv files - $(date +'%Y-%m-%d')"
-          set -e  # Add error checking
-          git merge --no-ff
-          git fetch origin
-          git pull origin main --ff-only  # Avoid conflicts when pulling
-          git push
+          git push origin main
