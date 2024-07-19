@@ -22,9 +22,6 @@ now = datetime.now()
 target_groups = ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k"]
 
 for group in target_groups:
-    # データを格納するためのリストを作成
-    data = []
-    
     for index, row in url_data.iterrows():
         media_group = row["group"]
         media_jp = row["media_jp"]
@@ -34,6 +31,9 @@ for group in target_groups:
         # 指定グループのみをスクレイプ
         if media_group != group:
             continue
+
+        # データを格納するためのリストを作成
+        data = []
 
         # スクレイピングの処理を実行
         start_page = 1
@@ -80,20 +80,20 @@ for group in target_groups:
                 print(f"No more data for {media_jp}. Switching to next URL.")
                 break
 
-    # 取得した情報をDataFrameに格納
-    df = pd.DataFrame(data, columns=["media_en", "media_jp", "title_articles", "link_articles", "date_original"])
+        # 取得した情報をDataFrameに格納
+        df = pd.DataFrame(data, columns=["media_en", "media_jp", "title_articles", "link_articles", "date_original"])
 
-    # 保存するディレクトリが存在しない場合は作成する
-    folder_name = now.strftime(f"html_mediaALL_{group}_%Y%m_%W")
-    os.makedirs(folder_name, exist_ok=True)
+        # 保存するディレクトリが存在しない場合は作成する
+        folder_name = now.strftime(f"html_mediaALL_{group}_%Y%m_%W")
+        os.makedirs(folder_name, exist_ok=True)
 
-    # ファイル名を設定
-    filename = f"{folder_name}/html_{group}_{now.strftime('%Y%m%d_%H%M%S')}.csv"
+        # ファイル名を設定
+        filename = f"{folder_name}/html_{media_en}_{now.strftime('%Y%m%d_%H%M%S')}.csv"
 
-    # DataFrameをCSVファイルとして書き出し（エンコーディング：CP932）
-    df.to_csv(filename, index=False, encoding="CP932", errors="ignore")
+        # DataFrameをCSVファイルとして書き出し（エンコーディング：CP932）
+        df.to_csv(filename, index=False, encoding="CP932", errors="ignore")
 
-    # 作業完了メッセージをプリント
-    print(f"Scraping complete for group {group}. File saved: {filename}")
+        # 作業完了メッセージをプリント
+        print(f"Scraping complete for {media_jp}. File saved: {filename}")
 
 print("Scraping finished for all groups")
