@@ -55,8 +55,8 @@ for group in target_groups:
                 try:
                     link_articles = item.find("a", class_="newsFeed_item_link")["href"]
                     title_articles = item.find("div", class_="newsFeed_item_title").text.strip()
-                    date_tag = item.find("div", class_="newsFeed_item_sub").find("time")
-                    
+                    date_tag = item.find("time")
+
                     if date_tag:
                         date_original = date_tag.text.strip()
                     else:
