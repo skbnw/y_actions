@@ -1,3 +1,7 @@
+target_groups = ["a", "b", "c"]
+target_groups = ["d", "e", "f"]
+target_groups = ["d", "e", "f"]
+
 [url]  <br>
 contains a list of media accounts
 
