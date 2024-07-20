@@ -1,14 +1,12 @@
 import requests
 from bs4 import BeautifulSoup
 import pandas as pd
-import time
+import time as t
 from datetime import datetime
-import re
-import urllib3
 import os
 
 # SSL証明書の検証を無効化
-urllib3.disable_warnings()
+requests.packages.urllib3.disable_warnings()
 
 # URLのリストを含むCSVファイルを読み込む
 url_data = pd.read_csv("url/media_url_group.csv")
@@ -54,20 +52,24 @@ for group in target_groups:
 
             # 各要素から必要な情報を取得し、データをリストに追加
             for item in items:
-                link_articles = item.find("a", class_="newsFeed_item_link")["href"]
-                title_articles = item.find("div", class_="newsFeed_item_title").text.strip()
-                date_tag = item.find("time", class_="newsFeed_item_date")
+                try:
+                    link_articles = item.find("a", class_="newsFeed_item_link")["href"]
+                    title_articles = item.find("div", class_="newsFeed_item_title").text.strip()
+                    date_tag = item.find("div", class_="newsFeed_item_sub").find("time")
+                    
+                    if date_tag:
+                        date_original = date_tag.text.strip()
+                    else:
+                        date_original = "No date found"
+                        print(f"Error: No date found for article: {title_articles}")
 
-                if date_tag:
-                    date_original = date_tag.text.strip()
-                else:
-                    date_original = "No date found"
-
-                # media_enをデータに追加
-                data.append([media_en, media_jp, title_articles, link_articles, date_original])
+                    # データに追加
+                    data.append([media_en, media_jp, title_articles, link_articles, date_original])
+                except AttributeError as e:
+                    print(f"Error parsing item: {e}")
 
             # インターバルを待つ
-            time.sleep(interval)
+            t.sleep(interval)
 
             # 作業進捗状況をプリント
             print(f"Scraped page {page} of {end_page} for {media_jp}")
