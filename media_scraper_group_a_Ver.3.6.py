@@ -52,7 +52,8 @@ for index, row in url_data.iterrows():
         for item in items:
             link_articles = item.find("a", class_="newsFeed_item_link")["href"]
             title_articles = item.find("div", class_="newsFeed_item_title").text.strip()
-            date_tag = item.find("time", class_="newsFeed_item_date")
+            # date_tag = item.find("time", class_="newsFeed_item_date")
+            date_tag = item.find("div", class_="newsFeed_item_sub").find("time")
             
             if date_tag:
                 date_original = date_tag.text.strip()
