@@ -35,7 +35,7 @@ for group in target_groups:
 
         # スクレイピングの処理を実行
         start_page = 1
-        end_page = 100
+        end_page = 5
         page = start_page  # page変数を初期化
         while page <= end_page:
             url_with_page = f"{url}?page={page}"
@@ -55,8 +55,8 @@ for group in target_groups:
                 try:
                     link_articles = item.find("a", class_="newsFeed_item_link")["href"]
                     title_articles = item.find("div", class_="newsFeed_item_title").text.strip()
-                    date_tag = item.find("time")
-
+                    date_tag = item.find("div", class_="newsFeed_item_sub").find("time")
+                    
                     if date_tag:
                         date_original = date_tag.text.strip()
                     else:
