@@ -17,7 +17,7 @@ interval = 3  # インターバル（秒）
 now = datetime.now()
 
 # 対象グループのリスト
-target_groups = ["d", "e", "f"]
+target_groups = ["g", "h"]
 
 for group in target_groups:
     for index, row in url_data.iterrows():
