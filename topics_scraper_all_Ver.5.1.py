@@ -92,7 +92,7 @@ for url_info in url_list:
                 title_element = item.find("div", class_="newsFeed_item_title")
                 title_pickup = title_element.text.strip() if title_element else ""
 
-                date_element = item.find("div", class_="newsFeed_item_sub").find("time")
+                date_element = item.select_one("div.newsFeed_item_sub time")
                 date_original = date_element.text.strip() if date_element else ""
 
                 # ctgryをデータに追加
