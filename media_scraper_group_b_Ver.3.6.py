@@ -35,7 +35,7 @@ for group in target_groups:
 
         # スクレイピングの処理を実行
         start_page = 1
-        end_page = 20
+        end_page = 100
         page = start_page  # page変数を初期化
         while page <= end_page:
             url_with_page = f"{url}?page={page}"
