@@ -1,6 +1,6 @@
-b target_groups = ["a", "b", "c"]<br>
-c target_groups = ["d", "e", "f"]<br>
-d target_groups = ["g", "h"]<br>
+a target_groups = ["a", "b", "c"]<br>
+b target_groups = ["d", "e", "f"]<br>
+c target_groups = ["g", "h"]<br>
 
 [url]  <br>
 contains a list of media accounts
