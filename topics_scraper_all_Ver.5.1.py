@@ -52,7 +52,10 @@ for url_info in url_list:
 
         try:
             # HTTP GETリクエストを送信してHTMLを取得（SSL証明書検証エラーを無効化）
-            response = requests.get(url, verify=False)
+            headers = {
+                'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
+            }
+            response = requests.get(url, headers=headers, verify=False)
             response.raise_for_status()
             html = response.text
         except requests.exceptions.RequestException as e:
@@ -62,37 +65,32 @@ for url_info in url_list:
         # BeautifulSoupを使用してHTMLをパース
         soup = BeautifulSoup(html, "html.parser")
 
-        # 記事アイテムをすべて取得
-        items = soup.find_all("div", class_="sc-278a0v-0 iiJVBF")
+        # ニュース記事のリンクを取得
+        items = soup.select(".sc-278a0v-0.iiJVBF")
 
         # 各要素から必要な情報を取得し、データをリストに追加
         for item in items:
+            link_tag = item.find("a")
+            link_short = link_tag["href"] if link_tag and link_tag.get("href") else None
+
+            if not link_short:
+                print(f"Error: No link found for item in category {ctgry}")
+                continue
+
+            # itemのリンク先にアクセスして情報を取得
             try:
-                # 記事のリンクを取得
-                link_tag = item.find("a")
-                link_short = link_tag["href"] if link_tag and link_tag.get("href") else None
-
-                if not link_short:
-                    print(f"Error: No link found for item in category {ctgry}")
-                    continue
-
-                # itemのlink先にアクセスして情報を取得
-                response_item = requests.get(link_short, verify=False)
+                response_item = requests.get(link_short, headers=headers, verify=False)
                 response_item.raise_for_status()
                 soup_item = BeautifulSoup(response_item.text, "html.parser")
 
-                # メディア名を取得
                 media_element = soup_item.select_one("article div a span span")
                 media_jp = media_element.text if media_element else "Media info not found"
 
-                # 詳細URLを取得
                 url_detail_element = soup_item.select_one("article div div p a")
                 link_articles = url_detail_element["href"] if url_detail_element else ""
 
-                # "/images"を含むリンクを削除
                 link_articles = re.sub(r"/images.*", "", link_articles)
 
-                # 記事タイトルを取得
                 title_long_element = soup_item.select_one("a > p")
                 title_articles = title_long_element.text if title_long_element else ""
 
@@ -102,7 +100,7 @@ for url_info in url_list:
                 date_element = item.find("time")
                 date_original = date_element.text.strip() if date_element else ""
 
-                # ctgryをデータに追加
+                # データに追加
                 data.append([ctgry, media_jp, title_pickup, title_articles, link_short, link_articles, date_original])
             except requests.exceptions.RequestException as e:
                 print(f"Error fetching item link {link_short}: {e}")
