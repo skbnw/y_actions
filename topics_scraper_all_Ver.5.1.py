@@ -65,12 +65,12 @@ for url_info in url_list:
         # BeautifulSoupを使用してHTMLをパース
         soup = BeautifulSoup(html, "html.parser")
 
-        # ニュース記事のリンクを取得
-        items = soup.select(".sc-278a0v-0.iiJVBF")
+        # <li class="newsFeed_item">の中の<a>タグを取得
+        items = soup.find_all("li", class_="newsFeed_item")
 
         # 各要素から必要な情報を取得し、データをリストに追加
         for item in items:
-            link_tag = item.find("a")
+            link_tag = item.find("a", class_="sc-1gg21n8-0 cDTGMJ")
             link_short = link_tag["href"] if link_tag and link_tag.get("href") else None
 
             if not link_short:
