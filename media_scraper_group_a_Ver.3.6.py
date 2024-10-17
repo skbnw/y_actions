@@ -53,10 +53,21 @@ for group in target_groups:
             # 各要素から必要な情報を取得し、データをリストに追加
             for item in items:
                 try:
-                    link_articles = item.find("a", class_="newsFeed_item_link")["href"]
-                    title_articles = item.find("div", class_="newsFeed_item_title").text.strip()
+                    link_tag = item.find("a", class_="newsFeed_item_link")
+                    if link_tag and link_tag.get("href"):
+                        link_articles = link_tag["href"]
+                    else:
+                        print(f"Error: 'a' tag with class 'newsFeed_item_link' not found or no href attribute")
+                        continue
+
+                    title_tag = item.find("div", class_="newsFeed_item_title")
+                    if title_tag:
+                        title_articles = title_tag.text.strip()
+                    else:
+                        print(f"Error: 'div' with class 'newsFeed_item_title' not found")
+                        continue
+
                     date_tag = item.find("div", class_="newsFeed_item_sub").find("time")
-                    
                     if date_tag:
                         date_original = date_tag.text.strip()
                     else:
@@ -65,6 +76,7 @@ for group in target_groups:
 
                     # データに追加
                     data.append([media_en, media_jp, title_articles, link_articles, date_original])
+
                 except AttributeError as e:
                     print(f"Error parsing item: {e}")
 
