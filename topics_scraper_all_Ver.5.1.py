@@ -62,37 +62,44 @@ for url_info in url_list:
         # BeautifulSoupを使用してHTMLをパース
         soup = BeautifulSoup(html, "html.parser")
 
-        # <a class="newsFeed_item_link">要素をすべて取得
-        items = soup.find_all("a", class_="newsFeed_item_link")
+        # 記事アイテムをすべて取得
+        items = soup.find_all("div", class_="sc-278a0v-0 iiJVBF")
 
         # 各要素から必要な情報を取得し、データをリストに追加
         for item in items:
-            link_short = item["href"]
-
             try:
-                # itemのlink先にアクセスしてmediaを取得
+                # 記事のリンクを取得
+                link_tag = item.find("a")
+                link_short = link_tag["href"] if link_tag and link_tag.get("href") else None
+
+                if not link_short:
+                    print(f"Error: No link found for item in category {ctgry}")
+                    continue
+
+                # itemのlink先にアクセスして情報を取得
                 response_item = requests.get(link_short, verify=False)
                 response_item.raise_for_status()
                 soup_item = BeautifulSoup(response_item.text, "html.parser")
 
+                # メディア名を取得
                 media_element = soup_item.select_one("article div a span span")
                 media_jp = media_element.text if media_element else "Media info not found"
 
-                # itemのlink先にアクセスしてurl_detailを取得
+                # 詳細URLを取得
                 url_detail_element = soup_item.select_one("article div div p a")
                 link_articles = url_detail_element["href"] if url_detail_element else ""
 
-                # "/images"を含めて削除
+                # "/images"を含むリンクを削除
                 link_articles = re.sub(r"/images.*", "", link_articles)
 
-                # itemのlink先にアクセスしてtitle_longを取得
+                # 記事タイトルを取得
                 title_long_element = soup_item.select_one("a > p")
                 title_articles = title_long_element.text if title_long_element else ""
 
-                title_element = item.find("div", class_="newsFeed_item_title")
+                title_element = item.find("div", class_="sc-3ls169-0 dHAJpi")
                 title_pickup = title_element.text.strip() if title_element else ""
 
-                date_element = item.select_one("div.newsFeed_item_sub time")
+                date_element = item.find("time")
                 date_original = date_element.text.strip() if date_element else ""
 
                 # ctgryをデータに追加
@@ -118,7 +125,6 @@ for url_info in url_list:
     df = pd.DataFrame(data, columns=["ctgry", "media_jp", "title_pickup", "title_articles", "link_pickup", "link_articles", "date_original"])
 
     # DataFrameをCSVファイルとして書き出し（エンコーディング：CP932）
-    # Modified code to save CSV files on a monthly basis
     filename = f"html_{ctgry}_{date_string_file}.csv"
     file_path = os.path.join(output_folder, filename)
     print(f"Saving to file: {file_path}")
@@ -126,3 +132,5 @@ for url_info in url_list:
 
     # 作業完了メッセージをプリント
     print(f"Scraping complete for {ctgry}. File saved: {file_path}")
+
+print("Scraping finished for all categories")
