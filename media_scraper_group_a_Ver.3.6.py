@@ -47,7 +47,8 @@ for group in target_groups:
             # BeautifulSoupを使用してHTMLをパース
             soup = BeautifulSoup(html, "html.parser")
 
-            # <li class="newsFeed_item">要素をすべて取得
+            # <div class="sc-3ls169-0 dHAJpi">（ニュースタイトル）と
+            # <em class="sc-1hy2mez-6 fufNza">（コメント数）を取得
             items = soup.find_all("li", class_="newsFeed_item")
 
             # 各要素から必要な情報を取得し、データをリストに追加
