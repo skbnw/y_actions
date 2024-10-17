@@ -47,16 +47,22 @@ for group in target_groups:
             # BeautifulSoupを使用してHTMLをパース
             soup = BeautifulSoup(html, "html.parser")
 
-            # <li class="newsFeed_item">要素をすべて取得
-            items = soup.find_all("li", class_="newsFeed_item")
+            # 新しいHTML構造に基づいてニュース記事のタイトルと日付を取得
+            items = soup.find_all("div", class_="sc-278a0v-0 iiJVBF")
 
             # 各要素から必要な情報を取得し、データをリストに追加
             for item in items:
                 try:
-                    link_articles = item.find("a", class_="newsFeed_item_link")["href"]
-                    title_articles = item.find("div", class_="newsFeed_item_title").text.strip()
-                    date_tag = item.find("div", class_="newsFeed_item_sub").find("time")
-                    
+                    # タイトルを取得
+                    title_tag = item.find("div", class_="sc-3ls169-0 dHAJpi")
+                    if title_tag:
+                        title_articles = title_tag.text.strip()
+                    else:
+                        print(f"Error: Title tag not found for {media_jp}")
+                        continue
+
+                    # 日付を取得
+                    date_tag = item.find("time")
                     if date_tag:
                         date_original = date_tag.text.strip()
                     else:
@@ -64,9 +70,10 @@ for group in target_groups:
                         print(f"Error: No date found for article: {title_articles}")
 
                     # データに追加
-                    data.append([media_en, media_jp, title_articles, link_articles, date_original])
+                    data.append([media_en, media_jp, title_articles, date_original])
+
                 except AttributeError as e:
-                    print(f"Error parsing item: {e}")
+                    print(f"Error parsing item for {media_jp}: {e}")
 
             # インターバルを待つ
             t.sleep(interval)
@@ -83,7 +90,7 @@ for group in target_groups:
                 break
 
         # 取得した情報をDataFrameに格納
-        df = pd.DataFrame(data, columns=["media_en", "media_jp", "title_articles", "link_articles", "date_original"])
+        df = pd.DataFrame(data, columns=["media_en", "media_jp", "title_articles", "date_original"])
 
         # 保存するディレクトリが存在しない場合は作成する
         folder_name = now.strftime(f"html_mediaALL_{group}_%Y%m_%W")
