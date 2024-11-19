@@ -16,7 +16,7 @@ urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
 # 期待されるクラス名を定義
 EXPECTED_CLASSES = {
-    "news_item": "newsFeed_item",  # ニュースアイテムのクラス
+    "news_link": "sc-1gg21n8-0",  # ニュースリンクのクラス
     "title_container": "sc-3ls169-0",  # タイトルコンテナのクラス
     "time": "sc-ioshdi-1",  # 時間表示のクラス
     "time_container": "sc-ioshdi-0"  # 時間コンテナのクラス
@@ -26,21 +26,20 @@ class HTMLStructureError(Exception):
     """HTML構造の変更を検出した際に発生する例外"""
     pass
 
-def validate_class_names(soup: BeautifulSoup, item_selector: str) -> None:
+def validate_class_names(soup: BeautifulSoup) -> None:
     """
     HTML構造のクラス名を検証する
     
     Args:
         soup: BeautifulSoupオブジェクト
-        item_selector: 検証するアイテムのセレクタ
         
     Raises:
         HTMLStructureError: クラス名が期待と異なる場合
     """
-    # ニュースアイテムの存在確認
-    items = soup.find_all("li", class_=EXPECTED_CLASSES["news_item"])
+    # ニュースリンクの存在確認
+    items = soup.find_all("a", class_=re.compile(EXPECTED_CLASSES["news_link"]))
     if not items:
-        raise HTMLStructureError(f"Expected class '{EXPECTED_CLASSES['news_item']}' for news items not found")
+        raise HTMLStructureError(f"Expected class containing '{EXPECTED_CLASSES['news_link']}' for news links not found")
     
     for item in items[:1]:  # 最初のアイテムのみチェック
         # タイトルコンテナの確認
@@ -61,14 +60,12 @@ def validate_class_names(soup: BeautifulSoup, item_selector: str) -> None:
 def scrape_news_item(item: BeautifulSoup, headers: Dict) -> Optional[List]:
     """個別のニュースアイテムをスクレイピング"""
     try:
-        # リンクの取得
-        link_tag = item.find("a")
-        if not link_tag or not link_tag.get("href"):
+        # リンクの取得（アイテム自体がaタグ）
+        link_short = item.get("href")
+        if not link_short:
             print("Error: No link found for item")
             return None
             
-        link_short = link_tag["href"]
-        
         # 詳細ページの取得
         response_item = requests.get(link_short, headers=headers, verify=False)
         response_item.raise_for_status()
@@ -145,14 +142,15 @@ def main():
                 
                 # HTML構造の検証
                 try:
-                    validate_class_names(soup, "li.newsFeed_item")
+                    validate_class_names(soup)
                 except HTMLStructureError as e:
                     print(f"\n警告: HTMLの構造が変更されました！")
                     print(f"エラー内容: {str(e)}")
                     print("スクレイピングを中止します。HTML構造の確認が必要です。")
                     sys.exit(1)
                 
-                items = soup.find_all("li", class_=EXPECTED_CLASSES["news_item"])
+                # 記事リンクの取得（新しい構造に対応）
+                items = soup.find_all("a", class_=re.compile(EXPECTED_CLASSES["news_link"]))
                 if not items:
                     break
 
