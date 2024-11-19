@@ -8,101 +8,139 @@ import os
 # SSL証明書の検証を無効化
 requests.packages.urllib3.disable_warnings()
 
-# URLのリストを含むCSVファイルを読み込む
-url_data = pd.read_csv("url/media_url_group.csv")
+# HTML構造の定義
+EXPECTED_CLASSES = {
+    "news_link": "sc-1gg21n8-0",  # ニュースリンクのクラス
+    "title_container": "sc-3ls169-0",  # タイトルコンテナのクラス
+    "time": "sc-ioshdi-1",  # 時間表示のクラス
+}
 
-interval = 3  # インターバル（秒）
+class HTMLStructureError(Exception):
+    """HTML構造の変更を検出した際に発生する例外"""
+    pass
 
-# 現在の日付と時刻を取得
-now = datetime.now()
+def validate_html_structure(soup):
+    """HTML構造を検証する関数"""
+    # ニュースリンクの存在確認
+    items = soup.find_all("a", class_=re.compile(EXPECTED_CLASSES["news_link"]))
+    if not items:
+        raise HTMLStructureError(f"Expected class containing '{EXPECTED_CLASSES['news_link']}' for news links not found")
+    return items
 
-# 対象グループのリスト
-target_groups = ["g", "h"]
+def scrape_news_item(item):
+    """個別のニュースアイテムをスクレイピングする関数"""
+    try:
+        # タイトルを取得
+        title_tag = item.find("div", class_=re.compile(EXPECTED_CLASSES["title_container"]))
+        if not title_tag:
+            return None, None
+        title_articles = title_tag.text.strip()
 
-for group in target_groups:
-    for index, row in url_data.iterrows():
-        media_group = row["group"]
-        media_jp = row["media_jp"]
-        media_en = row["media_en"]
-        url = row["url"]
+        # 日付を取得
+        date_tag = item.find("time", class_=re.compile(EXPECTED_CLASSES["time"]))
+        date_original = date_tag.text.strip() if date_tag else "No date found"
 
-        # 指定グループのみをスクレイプ
-        if media_group != group:
-            continue
+        return title_articles, date_original
+    except Exception as e:
+        print(f"Error parsing item: {e}")
+        return None, None
 
-        # データを格納するためのリストを作成
-        data = []
+def main():
+    # URLのリストを含むCSVファイルを読み込む
+    url_data = pd.read_csv("url/media_url_group.csv")
+    interval = 3  # インターバル（秒）
+    
+    # 現在の日付と時刻を取得
+    now = datetime.now()
+    
+    # 対象グループのリスト
+    target_groups = ["g", "h"]
+    
+    # ユーザーエージェントの設定
+    headers = {
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
+    }
 
-        # スクレイピングの処理を実行
-        start_page = 1
-        end_page = 100
-        page = start_page  # page変数を初期化
-        while page <= end_page:
-            url_with_page = f"{url}?page={page}"
-
-            # HTTP GETリクエストを送信してHTMLを取得（SSL証明書の検証を無効化）
-            response = requests.get(url_with_page, verify=False)
-            html = response.text
-
-            # BeautifulSoupを使用してHTMLをパース
-            soup = BeautifulSoup(html, "html.parser")
-
-            # 新しいHTML構造に基づいてニュース記事のタイトルと日付を取得
-            items = soup.find_all("div", class_="sc-278a0v-0 iiJVBF")
-
-            # 各要素から必要な情報を取得し、データをリストに追加
-            for item in items:
+    for group in target_groups:
+        for index, row in url_data.iterrows():
+            media_group = row["group"]
+            media_jp = row["media_jp"]
+            media_en = row["media_en"]
+            url = row["url"]
+            
+            # 指定グループのみをスクレイプ
+            if media_group != group:
+                continue
+                
+            # データを格納するためのリスト
+            data = []
+            
+            # スクレイピングの処理を実行
+            start_page = 1
+            end_page = 100
+            page = start_page
+            
+            while page <= end_page:
+                url_with_page = f"{url}?page={page}"
                 try:
-                    # タイトルを取得
-                    title_tag = item.find("div", class_="sc-3ls169-0 dHAJpi")
-                    if title_tag:
-                        title_articles = title_tag.text.strip()
-                    else:
-                        print(f"Error: Title tag not found for {media_jp}")
-                        continue
+                    # HTTP GETリクエストを送信
+                    response = requests.get(url_with_page, headers=headers, verify=False)
+                    response.raise_for_status()
+                    soup = BeautifulSoup(response.text, "html.parser")
+                    
+                    try:
+                        # HTML構造の検証と記事の取得
+                        items = validate_html_structure(soup)
+                    except HTMLStructureError as e:
+                        print(f"\n警告: HTMLの構造が変更されました！")
+                        print(f"エラー内容: {str(e)}")
+                        print("スクレイピングを中止します。HTML構造の確認が必要です。")
+                        return
+                    
+                    if not items:
+                        print(f"No more data for {media_jp}. Switching to next URL.")
+                        break
+                    
+                    # 各記事の情報を取得
+                    for item in items:
+                        title_articles, date_original = scrape_news_item(item)
+                        if title_articles and date_original:
+                            data.append([media_en, media_jp, title_articles, date_original])
+                    
+                    # インターバルを待つ
+                    t.sleep(interval)
+                    
+                    # 作業進捗状況をプリント
+                    print(f"Scraped page {page} of {end_page} for {media_jp}")
+                    
+                    # ページの増加
+                    page += 1
+                    
+                except requests.exceptions.RequestException as e:
+                    print(f"Error fetching {url_with_page}: {e}")
+                    break
+                except Exception as e:
+                    print(f"Unexpected error processing {url_with_page}: {e}")
+                    continue
+            
+            if data:
+                # 取得した情報をDataFrameに格納
+                df = pd.DataFrame(data, columns=["media_en", "media_jp", "title_articles", "date_original"])
+                
+                # 保存するディレクトリを作成
+                folder_name = now.strftime(f"html_mediaALL_{group}_%Y%m_%W")
+                os.makedirs(folder_name, exist_ok=True)
+                
+                # ファイル名を設定
+                filename = f"{folder_name}/html_{media_en}_{now.strftime('%Y%m%d_%H%M%S')}.csv"
+                
+                # DataFrameをCSVファイルとして保存
+                df.to_csv(filename, index=False, encoding="CP932", errors="ignore")
+                print(f"Scraping complete for {media_jp}. File saved: {filename}")
+            else:
+                print(f"No data was collected for {media_jp}")
 
-                    # 日付を取得
-                    date_tag = item.find("time")
-                    if date_tag:
-                        date_original = date_tag.text.strip()
-                    else:
-                        date_original = "No date found"
-                        print(f"Error: No date found for article: {title_articles}")
+    print("Scraping finished for all groups")
 
-                    # データに追加
-                    data.append([media_en, media_jp, title_articles, date_original])
-
-                except AttributeError as e:
-                    print(f"Error parsing item for {media_jp}: {e}")
-
-            # インターバルを待つ
-            t.sleep(interval)
-
-            # 作業進捗状況をプリント
-            print(f"Scraped page {page} of {end_page} for {media_jp}")
-
-            # ページの増加
-            page += 1
-
-            # データがなくなった場合に次のURLにスイッチ
-            if not items:
-                print(f"No more data for {media_jp}. Switching to next URL.")
-                break
-
-        # 取得した情報をDataFrameに格納
-        df = pd.DataFrame(data, columns=["media_en", "media_jp", "title_articles", "date_original"])
-
-        # 保存するディレクトリが存在しない場合は作成する
-        folder_name = now.strftime(f"html_mediaALL_{group}_%Y%m_%W")
-        os.makedirs(folder_name, exist_ok=True)
-
-        # ファイル名を設定
-        filename = f"{folder_name}/html_{media_en}_{now.strftime('%Y%m%d_%H%M%S')}.csv"
-
-        # DataFrameをCSVファイルとして書き出し（エンコーディング：CP932）
-        df.to_csv(filename, index=False, encoding="CP932", errors="ignore")
-
-        # 作業完了メッセージをプリント
-        print(f"Scraping complete for {media_jp}. File saved: {filename}")
-
-print("Scraping finished for all groups")
+if __name__ == "__main__":
+    main()
