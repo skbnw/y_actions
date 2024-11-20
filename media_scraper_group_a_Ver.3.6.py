@@ -4,82 +4,59 @@ import pandas as pd
 import time as t
 from datetime import datetime
 import os
+import re
 
 # SSL証明書の検証を無効化
 requests.packages.urllib3.disable_warnings()
 
-# HTML構造の定義
+# HTML構造の定義（複数クラス候補に対応）
 EXPECTED_CLASSES = {
-    "news_link": "sc-1gg21n8-0",  # ニュースリンクのクラス
-    "title_container": "sc-3ls169-0",  # タイトルコンテナのクラス
-    "time": "sc-ioshdi-1",  # 時間表示のクラス
+    "news_item": "sc-278a0v-0 iiJVBF",  # 記事コンテナのクラス
+    "news_link": r"sc-1gg21n8-0|cDTGMJ",  # ニュースリンクの複数候補
+    "title_container": r"sc-3ls169-0|dHAJpi",  # タイトルコンテナの複数候補
+    "time": r"sc-ioshdi-1|dRkKNK",  # 時間表示の複数候補
+    "source": r"sc-fybyzc-5|SpEDp"  # 媒体名の複数候補
+}
+
+# インターバル（秒）
+interval = 3
+
+# 現在の日付と時刻を取得
+now = datetime.now()
+
+# 対象グループのリスト
+target_groups = ["a", "b", "c"]
+
+# ユーザーエージェントの設定
+headers = {
+    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
 }
 
 class HTMLStructureError(Exception):
     """HTML構造の変更を検出した際に発生する例外"""
     pass
 
-def validate_html_structure(soup):
-    """HTML構造を検証する関数"""
-    # ニュースリンクの存在確認
-    items = soup.find_all("a", class_=re.compile(EXPECTED_CLASSES["news_link"]))
-    if not items:
-        raise HTMLStructureError(f"Expected class containing '{EXPECTED_CLASSES['news_link']}' for news links not found")
-    return items
-
-def scrape_news_item(item):
-    """個別のニュースアイテムをスクレイピングする関数"""
-    try:
-        # タイトルを取得
-        title_tag = item.find("div", class_=re.compile(EXPECTED_CLASSES["title_container"]))
-        if not title_tag:
-            return None, None
-        title_articles = title_tag.text.strip()
-
-        # 日付を取得
-        date_tag = item.find("time", class_=re.compile(EXPECTED_CLASSES["time"]))
-        date_original = date_tag.text.strip() if date_tag else "No date found"
-
-        return title_articles, date_original
-    except Exception as e:
-        print(f"Error parsing item: {e}")
-        return None, None
-
-def main():
-    # URLのリストを含むCSVファイルを読み込む
-    url_data = pd.read_csv("url/media_url_group.csv")
-    interval = 3  # インターバル（秒）
-    
-    # 現在の日付と時刻を取得
-    now = datetime.now()
-    
-    # 対象グループのリスト
-    target_groups = ["a", "b", "c"]
-    
-    # ユーザーエージェントの設定
-    headers = {
-        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
-    }
-
+def scrape_news(url_data):
+    """ニュースデータをスクレイピングしてCSVに保存"""
     for group in target_groups:
         for index, row in url_data.iterrows():
             media_group = row["group"]
             media_jp = row["media_jp"]
             media_en = row["media_en"]
             url = row["url"]
-            
+
             # 指定グループのみをスクレイプ
             if media_group != group:
                 continue
-                
-            # データを格納するためのリスト
+
+            # データを格納するリストを作成
             data = []
-            
-            # スクレイピングの処理を実行
+
+            # ページ番号を設定
             start_page = 1
             end_page = 100
             page = start_page
-            
+
             while page <= end_page:
                 url_with_page = f"{url}?page={page}"
                 try:
@@ -87,54 +64,72 @@ def main():
                     response = requests.get(url_with_page, headers=headers, verify=False)
                     response.raise_for_status()
                     soup = BeautifulSoup(response.text, "html.parser")
-                    
-                    try:
-                        # HTML構造の検証と記事の取得
-                        items = validate_html_structure(soup)
-                    except HTMLStructureError as e:
-                        print(f"\n警告: HTMLの構造が変更されました！")
-                        print(f"エラー内容: {str(e)}")
-                        print("スクレイピングを中止します。HTML構造の確認が必要です。")
-                        return
-                    
+
+                    # 新しいHTML構造に基づいてニュース記事を取得
+                    items = soup.find_all("div", class_=EXPECTED_CLASSES["news_item"])
+
                     if not items:
-                        print(f"No more data for {media_jp}. Switching to next URL.")
-                        break
-                    
-                    # 各記事の情報を取得
+                        raise HTMLStructureError(f"No articles found for {media_jp} on page {page}")
+
                     for item in items:
-                        title_articles, date_original = scrape_news_item(item)
-                        if title_articles and date_original:
-                            data.append([media_en, media_jp, title_articles, date_original])
-                    
+                        try:
+                            # ニュースリンクを取得
+                            link_tag = item.find("a", class_=re.compile(EXPECTED_CLASSES["news_link"]), href=True)
+                            article_link = link_tag["href"] if link_tag else "No link found"
+
+                            # タイトルを取得
+                            title_tag = item.find("div", class_=re.compile(EXPECTED_CLASSES["title_container"]))
+                            title_articles = title_tag.text.strip() if title_tag else "No title found"
+
+                            # 日付を取得
+                            date_tag = item.find("time", class_=re.compile(EXPECTED_CLASSES["time"]))
+                            date_original = date_tag.text.strip() if date_tag else "No date found"
+
+                            # ソース（媒体名）を取得
+                            source_tag = item.find("span", class_=re.compile(EXPECTED_CLASSES["source"]))
+                            source_name = source_tag.text.strip() if source_tag else "No source found"
+
+                            # 必須項目が揃っているか確認
+                            if not article_link or not title_articles or not date_original:
+                                raise HTMLStructureError(f"Missing required data for an article")
+
+                            # データをリストに追加
+                            data.append([media_en, media_jp, title_articles, date_original, source_name, article_link])
+
+                        except Exception as e:
+                            raise HTMLStructureError(f"Error parsing item for {media_jp}: {e}")
+
                     # インターバルを待つ
                     t.sleep(interval)
-                    
+
                     # 作業進捗状況をプリント
                     print(f"Scraped page {page} of {end_page} for {media_jp}")
-                    
-                    # ページの増加
+
+                    # ページ番号を増加
                     page += 1
-                    
+
                 except requests.exceptions.RequestException as e:
                     print(f"Error fetching {url_with_page}: {e}")
                     break
+                except HTMLStructureError as e:
+                    print(f"Critical error: {e}")
+                    raise e  # GitHub Actionsを停止させるため例外を再スロー
                 except Exception as e:
                     print(f"Unexpected error processing {url_with_page}: {e}")
                     continue
-            
+
+            # 取得したデータをDataFrameに格納
             if data:
-                # 取得した情報をDataFrameに格納
-                df = pd.DataFrame(data, columns=["media_en", "media_jp", "title_articles", "date_original"])
-                
-                # 保存するディレクトリを作成
+                df = pd.DataFrame(data, columns=["media_en", "media_jp", "title_articles", "date_original", "source_name", "article_link"])
+
+                # 保存ディレクトリを作成
                 folder_name = now.strftime(f"html_mediaALL_{group}_%Y%m_%W")
                 os.makedirs(folder_name, exist_ok=True)
-                
+
                 # ファイル名を設定
                 filename = f"{folder_name}/html_{media_en}_{now.strftime('%Y%m%d_%H%M%S')}.csv"
-                
-                # DataFrameをCSVファイルとして保存
+
+                # CSVファイルとして保存
                 df.to_csv(filename, index=False, encoding="CP932", errors="ignore")
                 print(f"Scraping complete for {media_jp}. File saved: {filename}")
             else:
@@ -143,4 +138,6 @@ def main():
     print("Scraping finished for all groups")
 
 if __name__ == "__main__":
-    main()
+    # URLのリストを含むCSVファイルを読み込む
+    url_data = pd.read_csv("url/media_url_group.csv")
+    scrape_news(url_data)
