@@ -1,0 +1,24 @@
+﻿media_en,media_jp,url,status,pages_scraped,article_count,output_file,error
+biz_it_sj,スマートジャパン,https://news.yahoo.co.jp/media/biz_it_sj,not_found,0,0,,HTTP 404
+choani,超！アニメディア,https://news.yahoo.co.jp/media/choani,not_found,0,0,,HTTP 404
+clc_toho,東方新報,https://news.yahoo.co.jp/media/clc_toho,not_found,0,0,,HTTP 404
+cosmopoli,コスモポリタン,https://news.yahoo.co.jp/media/cosmopoli,not_found,0,0,,HTTP 404
+dewsv,ダンスニュースメディアサイト Dews,https://news.yahoo.co.jp/media/dewsv,not_found,0,0,,HTTP 404
+gendaibiz,現代ビジネス,https://news.yahoo.co.jp/media/gendaibiz,not_found,0,0,,HTTP 404
+hitoc,ひとシネマ,https://news.yahoo.co.jp/media/hitoc,not_found,0,0,,HTTP 404
+hokuriku,北陸新幹線で行こう！ 北陸・信越観光ナビ,https://news.yahoo.co.jp/media/hokuriku,not_found,0,0,,HTTP 404
+jalan,じゃらんニュース,https://news.yahoo.co.jp/media/jalan,not_found,0,0,,HTTP 404
+kansensho,感染症・予防接種ナビ,https://news.yahoo.co.jp/media/kansensho,not_found,0,0,,HTTP 404
+kyoikuict,教育とICT Online,https://news.yahoo.co.jp/media/kyoikuict,not_found,0,0,,HTTP 404
+nakamaaru,なかまぁる,https://news.yahoo.co.jp/media/nakamaaru,not_found,0,0,,HTTP 404
+rekishin,歴史人,https://news.yahoo.co.jp/media/rekishin,not_found,0,0,,HTTP 404
+rikunabin,リクナビNEXTジャーナル,https://news.yahoo.co.jp/media/rikunabin,not_found,0,0,,HTTP 404
+sakae,月刊糖尿病ライフ さかえ,https://news.yahoo.co.jp/media/sakae,not_found,0,0,,HTTP 404
+shikihos,会社四季報オンライン,https://news.yahoo.co.jp/media/shikihos,success,40,1009,C:\Users\SKBNW\Documents\Github\y_actions\code\02-recovery\output\20260527_1115\html_shikihos_20260527_1115.csv,
+sjournal,就職ジャーナル,https://news.yahoo.co.jp/media/sjournal,not_found,0,0,,HTTP 404
+socra,ニュースソクラ,https://news.yahoo.co.jp/media/socra,not_found,0,0,,HTTP 404
+srnijugo,新R25,https://news.yahoo.co.jp/media/srnijugo,not_found,0,0,,HTTP 404
+tptj,ザ・プレーヤーズ・トリビューン ジャパン,https://news.yahoo.co.jp/media/tptj,not_found,0,0,,HTTP 404
+umakeiba,優馬,https://news.yahoo.co.jp/media/umakeiba,not_found,0,0,,HTTP 404
+usoccer,超WORLDサッカー！,https://news.yahoo.co.jp/media/usoccer,not_found,0,0,,HTTP 404
+ykf,夕刊フジ,https://news.yahoo.co.jp/media/ykf,not_found,0,0,,HTTP 404
